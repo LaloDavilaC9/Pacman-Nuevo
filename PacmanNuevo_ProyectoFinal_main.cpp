@@ -3,13 +3,5 @@
 using namespace std;
 
 int main(){
-<<<<<<< HEAD
-	cout<<"Wishin"<<endl;
-	cout<<"Hola"<<endl;
-	cout<<"Hola"<<endl;
-	cout<<"Hola"<<endl;
-	cout<<"Hola"<<endl;
-=======
-	
->>>>>>> parent of 949a152... Update PacmanNuevo_ProyectoFinal_main.cpp
+	cout<<"Wishin, esta es la prueba definitiva, si jala, pos jaló"<<endl;
 }

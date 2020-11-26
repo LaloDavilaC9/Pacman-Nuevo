@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 class Impresiones {
 	int matrizJuego[20][30];
@@ -22,6 +22,7 @@ Impresiones::Impresiones() {
 	}
 }
 void Impresiones::mapa_1() {
+	vector<vector<Nodo>> redNodos;
 	int matrizJuegoAux[20][30]{
 		//   0 1 2 3 4 5 6 7 8 9 10        15        20        25      29
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},//0

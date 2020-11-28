@@ -1,16 +1,20 @@
 #pragma once
 
 #include <vector>
-#include <iostream>
-
-using namespace std;
-
-struct Nodo {
-	int posX, posY, id;
+class A_Search {
+	private:
+		struct Nodo {
+			bool obstaculo = false;
+			bool nVisitado = false;
+			float fMetaGlobal;
+			float FMetaLocal;
+			int x, y;
+			std::vector <Nodo *> vecN_Vecinos;
+			Nodo* padre;
+		};
+		Nodo *nodos=nullptr;
+		int anchoMapa=30;
+		int alturaMapa=20;
+	protected:
+		virtual bool creacionDeUsuario() {return true;}
 };
-
-struct Edge {
-	Nodo inicio, fin;
-	float distancia;
-};
-

@@ -13,11 +13,15 @@ private:
     string nombreU, password;
 public:
     Jugadores();
-    void setDatos();
     bool verificarRepeticionesUsuario();
     unsigned int verID() { return id; }
+	void setNombre(string nombre) {nombreU = nombre;}
+	void setPassword(string pass) {password = pass;}
     void setVidas(unsigned int nVidas) { vidas = nVidas; }
     void setPuntos(unsigned int score) { puntos = score; }
+	void setID(unsigned int iD) {id = iD;}
+	string getNom() {return nombreU;}
+	string getPass() {return password;}
     unsigned int verPuntos() { return puntos; };
 };
 
@@ -38,35 +42,23 @@ Jugadores::Jugadores() {
     this->nombreU = " ";
     this->password = " ";
 }
-
-void Jugadores::setDatos() {
-CambioNombre:
-    cout << "Nombre de usuario: ";
-    fflush(stdin);
-    getline(cin, this->nombreU);
-    if (!verificarRepeticionesUsuario()) {
-        cout << "Nombre de usuario NO disponible" << endl;
-        cout << "Ingrese otro nombre de usuario" << endl;
-        goto CambioNombre;
-    }
-    cout << "Contrase" << char(164) << "a: ";
-    fflush(stdin);
-    getline(cin, password);
-
-}
 bool Jugadores::verificarRepeticionesUsuario() {
     fstream archivo;
     Jugadores aux;
-    archivo.open("DatosJugadores.bin", ios::binary | ios::in);
-    while (!archivo.eof()) {
+    archivo.open("DatosJugadores.dat", ios::binary | ios::in);
+    archivo.seekg(0, ios::end);
+	if(archivo.tellg()==0) //Indica que el archivo estÃ¡ vacio
+		return false;	//Por tanto, no habrÃ¡ repeticiÃ³n de usuario
+	while (!archivo.eof()) {
         archivo.read((char*)&aux, sizeof(aux));
-        if (aux.nombreU == this->nombreU) 
+        if (aux.nombreU == this->nombreU) {
+			archivo.close();
 			return true;
+		}
     }
     archivo.close();
     return false;
 }
-
 //Miembros de la clase HistorialJugadores
 Jugadores * HistorialJugadores::registroEnArchivo() {
 	Jugadores jug;
@@ -87,7 +79,7 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
 	BITMAP *continuar=create_bitmap(900, 600);
 	continuar=load_bitmap("FotoRegistro.bmp", NULL);
 	bool salida=false,salida2=false,usuarioLibre=false;
-	strcpy(usuario.nombreUsuario,"                           ");
+	string auxNomb="", auxPass="";
 	blit(registro, screen, 0, 0, 0, 0, 900, 600);
 	clear_keybuf();//Borramos el buffer de entrada del teclado
 	while(!salida) {
@@ -97,37 +89,36 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
 				 newkey = readkey();//Almacenamos el valor
 				 ASCII = newkey & 0xff;//Convertimos lo almacenado
 				if(ASCII>=32 && ASCII <=126) {//Validamos el ingreso de solo caracteres permitidos
-					if(indice<20-1) {//Validamos que el usuario no ingrese más caracteres de los permitidos
-						jug.nomU[indice]=ASCII;//Metemos el caracter ingresado al vector
+					if(indice<20-1) {//Validamos que el usuario no ingrese mï¿½s caracteres de los permitidos
+						auxNomb[indice]=ASCII;//Metemos el caracter ingresado al vector
 						indice++;
-						jug.nomU[indice]='\0';//Asignamos el fin de línea
+						auxNomb[indice]='\0';//Asignamos el fin de lï¿½nea
 					}
 				}
-				else if(ASCII==8){//Está retrocediendo
-					usuario.nombreUsuario[indice]=' ';//Se borra la posición actual
+				else if(ASCII==8){//Estï¿½ retrocediendo
+					auxNomb[indice]=' ';//Se borra la posiciï¿½n actual
 					if(indice!=0){
-						indice--;//Cambiamos de índice
-						jug.nomU[indice]=' ';//Se borra la posición actual
+						indice--;//Cambiamos de ï¿½ndice
+						auxNomb[indice]=' ';//Se borra la posiciï¿½n actual
 					}
 				}
-				else if(ASCII==27){//Apretó Escape, hay que retornar
+				else if(ASCII==27){//Apretï¿½ Escape, hay que retornar
 					return 1;
 				}
 			}
-			if(ASCII==13){//Verificamos si ya está completo el nombre de usuario
-				if(jug.verificarRepeticionesUsuario()/*validarUsuario(registroUsuarios,usuario.nombreUsuario)==1*/){//El usuario está repetido, hay que indicarle al usuario
-					textout(screen, font, "¡Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
+			if(ASCII==13){//Verificamos si ya estï¿½ completo el nombre de usuario
+				if(jug.verificarRepeticionesUsuario()/*validarUsuario(registroUsuarios,usuario.nombreUsuario)==1*/){//El usuario estï¿½ repetido, hay que indicarle al usuario
+					textout(screen, font, "ï¿½Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
 				}	
 				else{
 					textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
 					usuarioLibre=true;
 				}
 			}
-			textout(screen, font, usuario.nombreUsuario, 335, 99, AZUL);
-		} while(usuarioLibre==false);//Sale cuando se le da un enter y el usuario es válido
-		
+			jug.setNombre(auxNomb);
+			textout(screen, font, auxNomb, 335, 99, AZUL);
+		} while(usuarioLibre==false);//Sale cuando se le da un enter y el usuario es vï¿½lido	
 		indice=0;
-		//strcpy(usuario.contrasena,"        ");
 		clear_keybuf();
 		do {
 			vline(screen, indice*8+335, 210, 218, AZUL);
@@ -140,54 +131,62 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
 				 else{
 				 	if(ASCII>=32 && ASCII <=126) {
 						if(indice<25-1) {
-							jug.password[indice]=ASCII;
+							auxPass[indice]=ASCII;
 							indice++;
-							jug.password[indice]='\0';
+							auxPass[indice]='\0';
 						}
 				 	}
-					 else if(ASCII==8){//Está retrocediendo
-						jug.password[indice-1]=' ';//Se borra la posición actual
+					 else if(ASCII==8){//Estï¿½ retrocediendo
+						auxPass[indice-1]=' ';//Se borra la posiciï¿½n actual
 						if(indice!=0){
-							indice--;//Cambiamos de índice
+							indice--;//Cambiamos de ï¿½ndice
 						}
 					}
-					else if(ASCII==27){//Apretó Escape, hay que retornar
+					else if(ASCII==27){//Apretï¿½ Escape, hay que retornar
 						return 1;
 					}	
 				}
 			}
-			textout(screen, font, usuario.contrasena, 335, 210, AZUL);
+			jug.setPassword(auxPass);
+			textout(screen, font, auxPass, 335, 210, AZUL);
 		} 
 		while(salida2==false);
 		
-		//*pIdentificacion=usuario.id=secuenciaId(registroUsuarios);//Verifica cuál fue el último ID 
+		//*pIdentificacion=usuario.id=secuenciaId(registroUsuarios);//Verifica cuï¿½l fue el ï¿½ltimo ID 
 		//*pVidas=3;//Inicializamos al usuario con 3 vidas
 		
 		/*FILE registroUsuarios = fopen("Usuarios.dat","rb+");
 		if(!registroUsuarios){
 			registroUsuarios=fopen("Usuarios.dat","a+");
 		}
-		fseek(registroUsuarios, 0, SEEK_END);//Colocamos el puntero en su última posición
+		fseek(registroUsuarios, 0, SEEK_END);//Colocamos el puntero en su ï¿½ltima posiciï¿½n
 		fwrite(&usuario,sizeof(Usuario),1,registroUsuarios);
 		rewind(registroUsuarios);
 		fread(&usuario,sizeof(Usuario),1,registroUsuarios);
 		do{
 			fread(&usuario,sizeof(Usuario),1,registroUsuarios);
 		}while(!(feof(registroUsuarios)));
-		fclose(registroUsuarios);//Se recorre el archivo por precaución*/
+		fclose(registroUsuarios);//Se recorre el archivo por precauciï¿½n*/
 		
 		if(jug.getNom()!=" " && jug.getPass()!=" "/*strcmp(usuario.nombreUsuario, "NULL")!=0 && strcmp(usuario.contrasena, "NULL")!=0*/) {
 			salida=true;
-		}//Salimos del ciclo que controla la función
+		}//Salimos del ciclo que controla la funciï¿½n
 	}
-    archivo.write((char*)&jugActual, sizeof(jugActual));
+	//Aqui asignamos el numero de usuario del jugador
+	//Los id comienzan en 1
+	unsigned int canReg;
+	archivo.seekg(0, ios::end);
+    canReg=archivo.tellg()/sizeof(jug);
+    archivo.seekg(ios::beg);
+	jug.setID(canReg+1);
+    archivo.write((char*)&jug, sizeof(jug));
     archivo.close();
 }
 void HistorialJugadores::modificarInformacion(unsigned int id, unsigned int nVidas, unsigned int nPuntos) {
     Jugadores nuevosDatos;
     std::fstream archivo;
     int pos;
-    archivo.open("DatosJugadores.bin", ios::binary | ios::in | ios::out);
+    archivo.open("DatosJugadores.dat", ios::binary | ios::in | ios::out);
     if (!archivo) {
         cout << "Hay un error en el archivo de almacenamiento" << endl;
         return;
@@ -210,7 +209,7 @@ std::vector <Jugadores> HistorialJugadores::Ganadores() {
     std::fstream archivo;
     std::vector <Jugadores> aux, ganadores;
     Jugadores lector;
-    archivo.open("DatosJugadores.bin", ios::binary | ios::in);
+    archivo.open("DatosJugadores.dat", ios::binary | ios::in);
     while (!archivo.eof()) {
         archivo.read((char*)&lector, sizeof(lector));
         aux.push_back(lector);

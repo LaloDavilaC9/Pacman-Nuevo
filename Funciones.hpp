@@ -201,9 +201,9 @@ void menu(int Opcion) {
 	vectorMotorJuego[14]=load_bitmap("Elementos\\perdiste.bmp", NULL);
 	vectorMotorJuego[0]=load_bitmap("Elementos\\Felicidades.bmp", NULL);
 	
-	FILE *registroUsuario;
+	fstream registroUsuario;
 	Usuario usuario;
-	BITMAP *advertencia=load_bitmap("Elementos\\advertencia.bmp",NULL);
+
 	BITMAP *ayuda=load_bitmap("Elementos\\ayuda.bmp",NULL);
 	char **nombresRank,ASCII;
 	int op=0;
@@ -217,7 +217,7 @@ void menu(int Opcion) {
 	*pNivel=1;
 	int *vecRank;
 	vecRank=new int [3];
-	
+	BITMAP *advertencia=load_bitmap("Elementos\\advertencia.bmp",NULL);
 	enum {Jugar=1, MejoresPuntuaciones, Ayuda, Salir};
 	enum {NuevoJuego=1, ContinuarJuego, RegresarAlMenuPrincipal};
 	int OpcionJuego;
@@ -230,6 +230,10 @@ void menu(int Opcion) {
 						case NuevoJuego:
 							jugador=registro.registroEnArchivo();
 							cout<<"Nombre: "<<jugador->getNom()<<endl;
+							cout<<"Id es:  "<<jugador->getId()<<endl;
+							cout<<"Contra es: "<<jugador->getPass()<<endl;
+							cout<<"Vidas es: "<<jugador->getVidas()<<endl;
+							cout<<"Puntos es "<<jugador->getPuntos()<<endl;
 							//op=registrarUsuario(registroUsuario,pIdentificacion,pVidas);
 							if(op!=1){
 								//motorJuego(registroUsuario,pIdentificacion,pNivel,pVidas,vectorPintarMapa,vectorMotorJuego);	
@@ -245,17 +249,7 @@ void menu(int Opcion) {
 				} while (OpcionJuego!=RegresarAlMenuPrincipal);
 				break;
 			case MejoresPuntuaciones:
-				registroUsuario=fopen("Usuarios.dat","rb");
-				if(!registroUsuario){//El archivo no se pudo abrir o no existe, por lo tanto no hay rank que mostrar
-					do{
-						blit(advertencia,screen,0,0,0,0,900,600);
-					}while(!key[KEY_ESC]);
-				}
-				else{
-					//nombresRank=ordenarRank(vecRank,registroUsuario);
-					//mejoresPuntuaciones(nombresRank,vecRank);	
-				}
-				
+				registro.ganadores();
 				break;
 			case Ayuda:
 					do{

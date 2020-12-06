@@ -1,19 +1,23 @@
 #pragma once
 
 class Pacman {
-public:
-	int posX, posY, direccion;
-private:
-	Pacman();
-	void movimiento();
-	bool movimientoValido(int *[]);
-	bool tienePoder(int *[]);
+	private:
+		int posX, posY, direccion;
+		bool poder;
+	public:
+		Pacman();
+		void movimiento();
+		bool movimientoValido(int *[]);
+		bool tienePoder(int *[]);
+		bool getPoder(){return this->poder;}
+		void setPoder(bool p){this->poder=p;}
 };
 
 Pacman::Pacman() {
 	this->posX = 0;
 	this->posY = 0;
 	this->direccion = 0;
+	this->poder=false;
 }
 void Pacman::movimiento() {
 

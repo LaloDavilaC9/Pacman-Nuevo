@@ -13,7 +13,7 @@ struct Jugador{
 };
 class Jugadores {
 private:
-    unsigned int vidas, puntos, id;
+    unsigned int vidas, puntos, id,nivel;
     string nombreU, password;
 public:
     Jugadores();
@@ -24,11 +24,13 @@ public:
     void setVidas(unsigned int nVidas) { vidas = nVidas; }
     void setPuntos(unsigned int score) { puntos = score; }
 	void setID(unsigned int iD) {id = iD;}
+	void setNivel(unsigned int niv){this->nivel=niv;}
 	string getNom() {return nombreU;}
 	string getPass() {return password;}
 	unsigned int getId(){return this->id;}
 	unsigned int getVidas(){return this->vidas;}
-    unsigned int getPuntos() { return puntos; };
+    unsigned int getPuntos() { return puntos; }
+    unsigned int getNivel(){return this->nivel;}
     char *convertir(string var){
     	char x[25];
     	for(int i=0;i<var.size();i++){
@@ -43,7 +45,7 @@ class HistorialJugadores {
 public:
     HistorialJugadores() {};
     Jugadores *  registroEnArchivo();
-    void modificarInformacion(unsigned int, unsigned int, unsigned int);
+    void modificarInformacion(Jugadores,int);
     void ganadores();
 };
 
@@ -56,6 +58,7 @@ Jugadores::Jugadores() {
    	this->id = 0;
     this->nombreU = " ";
     this->password = " ";
+    this->nivel=1;
 }
 bool Jugadores::verificarRepeticionesUsuario() {
     fstream archivo;
@@ -195,23 +198,23 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
     archivo.close();
 	return jug;	
 }
-void HistorialJugadores::modificarInformacion(unsigned int id, unsigned int nVidas, unsigned int nPuntos) {
+void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntosExtra) {
     Jugadores nuevosDatos;
-    std::fstream archivo;
+    fstream archivo;
     int pos;
     archivo.open("DatosJugadores.dat", ios::binary | ios::in | ios::out);
     if (!archivo) {
-        cout << "Hay un error en el archivo de almacenamiento" << endl;
+        //cout << "Hay un error en el archivo de almacenamiento" << endl;
         return;
     }
     while (!archivo.eof()) {
         pos = archivo.tellg();
         archivo.read((char*)&nuevosDatos, sizeof(nuevosDatos));
         if (archivo) {
-            if (id == nuevosDatos.verID()) {
+            if (jugadorCambio.getId() == nuevosDatos.getId()) {
                 archivo.seekg(pos);
-                nuevosDatos.setPuntos(nPuntos);
-                nuevosDatos.setVidas(nVidas);
+                nuevosDatos.setPuntos(jugadorCambio.getPuntos()+puntosExtra);
+                nuevosDatos.setVidas(jugadorCambio.getVidas());
                 archivo.write((char*)&nuevosDatos, sizeof(nuevosDatos));
                 break;
             }

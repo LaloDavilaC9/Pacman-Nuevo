@@ -1,7 +1,6 @@
 #include <iostream>
 #include <allegro.h>
-#include "Jugadores.hpp"
-
+#include "Mapa.h"
 
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
@@ -174,33 +173,7 @@ int MiniPortada() {
 void menu(int Opcion) {
 	Jugadores *jugador;
 	HistorialJugadores registro;
-	BITMAP *vectorPintarMapa[10],*vectorMotorJuego[15];
-	vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_1.bmp", NULL);
-	vectorPintarMapa[1]=load_bitmap("Elementos\\Espacio.bmp", NULL);
-	vectorPintarMapa[2]=load_bitmap("Elementos\\PuntosChicos.bmp", NULL);
-	vectorPintarMapa[3]=load_bitmap("Elementos\\PuntosGrandes.bmp", NULL);
-	vectorPintarMapa[4]=load_bitmap("Elementos\\FantasmaBlinky_D.bmp", NULL);
-	vectorPintarMapa[5]=load_bitmap("Elementos\\FantasmaInky_D.bmp", NULL);
-	vectorPintarMapa[6]=load_bitmap("Elementos\\FantasmaPinky_D.bmp", NULL);
-	vectorPintarMapa[7]=load_bitmap("Elementos\\FantasmaClyde_D.bmp", NULL);
-	vectorPintarMapa[8]=load_bitmap("Elementos\\CuerpoPacman_I.bmp", NULL);
-	
-	vectorMotorJuego[1]=load_bitmap("Elementos\\Vidas1.bmp",NULL);
-	vectorMotorJuego[2]=load_bitmap("Elementos\\Vidas2.bmp",NULL);
-	vectorMotorJuego[3]=load_bitmap("Elementos\\Vidas3.bmp",NULL);
-	vectorMotorJuego[4]=load_bitmap("Elementos\\1Frutas.bmp",NULL);
-	vectorMotorJuego[5]=load_bitmap("Elementos\\2Frutas.bmp",NULL);
-	vectorMotorJuego[6]=load_bitmap("Elementos\\3Frutas.bmp",NULL);
-	vectorMotorJuego[7]=load_bitmap("Elementos\\4Frutas.bmp",NULL);
-	vectorMotorJuego[8]=load_bitmap("Elementos\\5Frutas.bmp",NULL);
-	vectorMotorJuego[9]=load_bitmap("Elementos\\advertenciasalir.bmp",NULL);
-	vectorMotorJuego[10]=load_bitmap("Elementos\\cargando1.bmp",NULL);
-	vectorMotorJuego[11]=load_bitmap("Elementos\\cargando2.bmp",NULL);
-	vectorMotorJuego[12]=load_bitmap("Elementos\\cargando3.bmp",NULL);
-	vectorMotorJuego[13]=load_bitmap("Elementos\\cargando0.bmp", NULL);
-	vectorMotorJuego[14]=load_bitmap("Elementos\\perdiste.bmp", NULL);
-	vectorMotorJuego[0]=load_bitmap("Elementos\\Felicidades.bmp", NULL);
-	
+	Mapa mapa;
 	fstream registroUsuario;
 	Usuario usuario;
 
@@ -228,14 +201,10 @@ void menu(int Opcion) {
 					OpcionJuego=MiniPortada();
 					switch (OpcionJuego) {
 						case NuevoJuego:
-							jugador=registro.registroEnArchivo();
-							cout<<"Nombre: "<<jugador->getNom()<<endl;
-							cout<<"Id es:  "<<jugador->getId()<<endl;
-							cout<<"Contra es: "<<jugador->getPass()<<endl;
-							cout<<"Vidas es: "<<jugador->getVidas()<<endl;
-							cout<<"Puntos es "<<jugador->getPuntos()<<endl;
-							//op=registrarUsuario(registroUsuario,pIdentificacion,pVidas);
-							if(op!=1){
+							jugador=registro.registroEnArchivo();//Un nuevo usuario fue registrado en el archivo
+							if(jugador->getNom().size()!=0){
+								mapa.motorJuego(jugador);
+								cout<<"HOLA"<<endl;
 								//motorJuego(registroUsuario,pIdentificacion,pNivel,pVidas,vectorPintarMapa,vectorMotorJuego);	
 							}
 							break;

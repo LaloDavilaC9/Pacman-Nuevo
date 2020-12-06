@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -34,6 +35,7 @@ public:
     vector <Jugadores> Ganadores();
 };
 
+bool compare(Jugadores& , Jugadores& );
 //Miembos de la clase Jugadores
 Jugadores::Jugadores() {
     this->vidas = 3;
@@ -67,7 +69,7 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
     if (!archivo) {
         cout << "No es posible ingresar datos." << endl;
         cout << "Hay un error en el archivo de almacenamiento" << endl;
-        return;
+        return jug;
     }
     
 	//Valida un registro de usuarios de buena manera

@@ -3,7 +3,6 @@
 #include "Funciones.hpp"
 using namespace std;
 int main(){
-	
 	init();
 	int Opcion, Salir=4;
 	do {

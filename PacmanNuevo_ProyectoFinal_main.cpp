@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Funciones.hpp"
+#include "Jugadores.h"
 using namespace std;
 
 int main(){

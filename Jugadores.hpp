@@ -1,12 +1,12 @@
-#pragma once
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-
+#include <allegro.h>
+#include <algorithm>
+#define AZUL makecol(51, 153, 255)//Color predefinido
+#define NEGRO makecol(0, 0, 0)//Color predefido
 using namespace std;
-
 class Jugadores {
 private:
     unsigned int vidas, puntos, id;
@@ -34,6 +34,7 @@ public:
     vector <Jugadores> Ganadores();
 };
 
+bool compare(Jugadores& x, Jugadores& y);
 //Miembos de la clase Jugadores
 Jugadores::Jugadores() {
     this->vidas = 3;
@@ -60,19 +61,19 @@ bool Jugadores::verificarRepeticionesUsuario() {
     return false;
 }
 //Miembros de la clase HistorialJugadores
-Jugadores * HistorialJugadores::registroEnArchivo() {
+Jugadores *HistorialJugadores::registroEnArchivo(){
 	Jugadores jug;
     fstream archivo;
     archivo.open("DatosJugadores.dat", ios::binary | ios::app);
     if (!archivo) {
         cout << "No es posible ingresar datos." << endl;
         cout << "Hay un error en el archivo de almacenamiento" << endl;
-        return;
+        return  NULL;
     }
     
 	//Valida un registro de usuarios de buena manera
 	//Usuario usuario;
-	char ASCII;
+	char ASCII, p[255];;
 	int newkey,indice=0;
 	BITMAP *registro=create_bitmap(900, 600);
 	registro=load_bitmap("FotoRegistroInicio.bmp", NULL);
@@ -103,20 +104,24 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
 					}
 				}
 				else if(ASCII==27){//Apretï¿½ Escape, hay que retornar
-					return 1;
+					return NULL;
 				}
 			}
-			if(ASCII==13){//Verificamos si ya estï¿½ completo el nombre de usuario
+			if(ASCII==13){//Verificamos si ya está completo el nombre de usuario
 				if(jug.verificarRepeticionesUsuario()/*validarUsuario(registroUsuarios,usuario.nombreUsuario)==1*/){//El usuario estï¿½ repetido, hay que indicarle al usuario
-					textout(screen, font, "ï¿½Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
+					//textout(screen, font, "¡Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
 				}	
 				else{
-					textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
+					//textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
 					usuarioLibre=true;
 				}
 			}
 			jug.setNombre(auxNomb);
-			textout(screen, font, auxNomb, 335, 99, AZUL);
+		
+			for(int x=0;x<auxNomb.size();x++){
+				p[x]=auxNomb.at(x);
+			}
+			//textout(screen, font, p, 335, 99, AZUL);
 		} while(usuarioLibre==false);//Sale cuando se le da un enter y el usuario es vï¿½lido	
 		indice=0;
 		clear_keybuf();
@@ -143,12 +148,15 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
 						}
 					}
 					else if(ASCII==27){//Apretï¿½ Escape, hay que retornar
-						return 1;
+						return NULL;
 					}	
 				}
 			}
 			jug.setPassword(auxPass);
-			textout(screen, font, auxPass, 335, 210, AZUL);
+			for(int x=0;x<auxNomb.size();x++){
+				p[x]=auxPass.at(x);//Cambiamos el String a char porque el Textout no acepta más que chars
+			}
+			//textout(screen, font, p, 335, 210, AZUL);
 		} 
 		while(salida2==false);
 		
@@ -182,6 +190,7 @@ Jugadores * HistorialJugadores::registroEnArchivo() {
     archivo.write((char*)&jug, sizeof(jug));
     archivo.close();
 }
+
 void HistorialJugadores::modificarInformacion(unsigned int id, unsigned int nVidas, unsigned int nPuntos) {
     Jugadores nuevosDatos;
     std::fstream archivo;
@@ -205,7 +214,7 @@ void HistorialJugadores::modificarInformacion(unsigned int id, unsigned int nVid
         }
     }
 }
-std::vector <Jugadores> HistorialJugadores::Ganadores() {
+vector <Jugadores> HistorialJugadores::Ganadores() {
     std::fstream archivo;
     std::vector <Jugadores> aux, ganadores;
     Jugadores lector;
@@ -214,7 +223,7 @@ std::vector <Jugadores> HistorialJugadores::Ganadores() {
         archivo.read((char*)&lector, sizeof(lector));
         aux.push_back(lector);
     }
-    sort(begin(aux), end(aux), compare);
+    sort(aux.begin(), aux.end(), compare);
     for (int i = 0; i < 3; i++) {
         ganadores.push_back(aux[i]);
     }

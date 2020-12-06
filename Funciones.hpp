@@ -1,7 +1,11 @@
 #include <iostream>
 #include <allegro.h>
-using namespace std;
+#include "Jugadores.hpp"
 
+
+#define AZUL makecol(51, 153, 255)//Color predefinido
+#define NEGRO makecol(0, 0, 0)//Color predefido
+using namespace std;
 struct Guardado{//Esta estructura es la encargada de manejar los puntos, el nivel y las vidas de los usuarios para guardarlos en un archivo binario.
 	int puntos=0;
 	int nivel=1;
@@ -168,6 +172,8 @@ int MiniPortada() {
 }
 
 void menu(int Opcion) {
+	Jugadores *jugador;
+	HistorialJugadores registro;
 	BITMAP *vectorPintarMapa[10],*vectorMotorJuego[15];
 	vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_1.bmp", NULL);
 	vectorPintarMapa[1]=load_bitmap("Elementos\\Espacio.bmp", NULL);
@@ -222,6 +228,8 @@ void menu(int Opcion) {
 					OpcionJuego=MiniPortada();
 					switch (OpcionJuego) {
 						case NuevoJuego:
+							jugador=registro.registroEnArchivo();
+							cout<<"Nombre: "<<jugador->getNom()<<endl;
 							//op=registrarUsuario(registroUsuario,pIdentificacion,pVidas);
 							if(op!=1){
 								//motorJuego(registroUsuario,pIdentificacion,pNivel,pVidas,vectorPintarMapa,vectorMotorJuego);	
@@ -257,5 +265,4 @@ void menu(int Opcion) {
 		}while (Opcion!=Salir);
 	}
 }
-
 

@@ -31,6 +31,7 @@ public:
 	unsigned int getVidas(){return this->vidas;}
     unsigned int getPuntos() { return puntos; }
     unsigned int getNivel(){return this->nivel;}
+    
 };
 
 class HistorialJugadores {
@@ -187,33 +188,41 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 	strcpy(auxiliarArchivo.password,jug->getPass().c_str());
 	auxiliarArchivo.puntos=jug->getPuntos();
 	auxiliarArchivo.vidas=jug->getVidas();
+	auxiliarArchivo.id=jug->getId();
 	archivo.seekp(0, ios::end);
     archivo.write((char*)&auxiliarArchivo, sizeof(Jugador));
     archivo.close();
 	return jug;	
 }
 void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntosExtra) {
-    Jugadores nuevosDatos;
+    Jugador nuevosDatos;
     fstream archivo;
     int pos;
-    archivo.open("DatosJugadores.dat", ios::binary | ios::in | ios::out);
+    archivo.open("Elementos\\DatosJugadores.dat", ios::binary | ios::in | ios::out);
     if (!archivo) {
         //cout << "Hay un error en el archivo de almacenamiento" << endl;
         return;
     }
-    while (!archivo.eof()) {
-        pos = archivo.tellg();
-        archivo.read((char*)&nuevosDatos, sizeof(nuevosDatos));
-        if (archivo) {
-            if (jugadorCambio.getId() == nuevosDatos.getId()) {
-                archivo.seekg(pos);
-                nuevosDatos.setPuntos(jugadorCambio.getPuntos()+puntosExtra);
-                nuevosDatos.setVidas(jugadorCambio.getVidas());
-                archivo.write((char*)&nuevosDatos, sizeof(nuevosDatos));
-                break;
-            }
-        }
-    }
+    archivo.seekg(0,ios::end);
+	int tamano=archivo.tellg()/sizeof(Jugador);
+    archivo.seekg(0,ios::beg);
+
+    for(int i=0;i<tamano;i++){
+       	archivo.read(reinterpret_cast<char*>(&nuevosDatos), sizeof(Jugador));
+      	if(jugadorCambio.getId()==nuevosDatos.id){
+      		//nuevosDatos.setPuntos(jugadorCambio.getPuntos()+puntosExtra);
+            //nuevosDatos.setVidas(jugadorCambio.getVidas());
+            nuevosDatos.puntos=jugadorCambio.getPuntos()+puntosExtra;
+            nuevosDatos.vidas=jugadorCambio.getVidas();
+            nuevosDatos.nivel=jugadorCambio.getNivel();
+            nuevosDatos.id=jugadorCambio.getId();
+            strcpy(nuevosDatos.nombreU,jugadorCambio.getNom().c_str());
+            strcpy(nuevosDatos.password,jugadorCambio.getPass().c_str());
+      		archivo.seekp( i * sizeof(Jugador) , ios::beg);//Estoy en el registro indicado
+      		archivo.write(reinterpret_cast<char*>(&nuevosDatos),sizeof(Jugador));
+      		break;
+		}
+	}
 }
 void HistorialJugadores::ganadores() {
 	BITMAP *buffer=create_bitmap(900, 600);
@@ -237,14 +246,11 @@ void HistorialJugadores::ganadores() {
     archivo.seekg(0,ios::beg);
 
     for(int i=0;i<tamano;i++){
-    	//archivo.read(reinterpret_cast<char*>(&lector), sizeof(Jugadores));
-    	archivo.seekg(i*sizeof(Jugador),ios::beg);
        	archivo.read((char*)&lector, sizeof(Jugador));
-       	//cout<<"ID "<<lecto<<" Nombre: "<<lector.getNom()<<" puntos: "<<lector.getPuntos()<<endl;
         aux.push_back(lector);
 	}
+
     sort(aux.begin(), aux.end(), compare);
-    //cout<<"Entro y se refiere a  "<<aux[0].getNom()<<" con puntos de "<<aux[0].getPuntos();
     while (!salir) {
         blit(buffer, screen, 0, 0, 0, 0, 900, 600);
         if(mouse_x>=17 && mouse_x<=257 && mouse_y>=495 && mouse_y<=581) {

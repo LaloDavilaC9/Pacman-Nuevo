@@ -8,6 +8,7 @@
 #define NEGRO makecol(0, 0, 0)//Color predefido
 
 class Pacman;
+class Clyde;
 
 class Mapa {
 	private:
@@ -413,10 +414,11 @@ void Mapa::ponerFruta() {
 }
 
 #include "Pacman.hpp"
-
+#include "Fantasmas.hpp"
 void Mapa::motorJuego(Jugadores *jugadorActual){
 	//Creamos a Pacman
 	Pacman pacman;
+	Clyde clyde(10,10,14);
 	HistorialJugadores auxiliarArchivo;
 	int l=0,l1=0,l2=0,vez=0,vezFruta=0,vezCargar=0,puntosScoreFinal,newkey,newkey2;
 	char ASCII,ASCII2;
@@ -435,6 +437,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		l=0;
 		do{//Ciclo interno  a realizar mientras no haya un cambio de nivel o un perdedor
 			pacman.movimiento(*this);
+			clyde.movimientoNormal(*this,vez);
 			//movimientoPacman(matrizJuego,vecPos,pvez,pcomida,pVidas,puntuacionTotal,pCambioNivel,pDir,registroUsuarios,pIdentificacion,pFrutas,pQuien,pPausaF,dificultad,sonidoActivo);//Le permitimos al Pacman moverse
 			//fantasmas(matrizJuego,vez,vecPos,pvez,pcomida,pVidas,pDirF1,pDirF2,pDirF3,pDirF4,pPausaF,dificultad);//Llama a los 4 fantasmas, según corresponda por el valor del "pvez#"
 			if(vez%4==0){//Este if controla la animación del Pacman comiendo
@@ -540,12 +543,14 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				//play_midi(perderMusic,1);//Se activa la música de derrota
 				perdedor=true;//Permitimos la salida de este ciclo y del siguiente
 			}
-			if(this->cambioNivel){//Habrá cambio de mapa, hay que guardar
+			if(this->cambioNivel){//Habrá cambio de nivel, hay que guardar
 				puntosScoreFinal=this->puntuacionTotal;//Por fines prácticos, hacemos un respaldo de la puntuación total del nivel	
 				jugadorActual->setPuntos(jugadorActual->getPuntos()+puntosScoreFinal);
 				jugadorActual->setNivel(jugadorActual->getNivel()+1);
 				auxiliarArchivo.modificarInformacion(*jugadorActual,0);
+				cout<<"Se supone que se guarda la info"<<endl;
 			}
+		
 		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa
 		//*pcomida=0;//Reiniciamos el contador de comida por si estuviera prendido, que no avance con poder al siguiente nivel
 		pacman.setPoder(false);
@@ -555,6 +560,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		//*puntuacionTotal=0;//Reseteamos la puntuación
 		this->puntuacionTotal=0;
 		//*pNivel+=1;//Aumentamos el nivel en 1
+			cout<<"Llega"<<endl;
 		if(perdedor){//Reiniciamos el nivel del usuario a 1 y le borramos su puntaje
 			jugadorActual->setNivel(1);
 			jugadorActual->setVidas(3);

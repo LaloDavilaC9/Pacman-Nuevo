@@ -1,6 +1,7 @@
 #include <iostream>
 #include <allegro.h>
 #include "Funciones.hpp"
+#include "Mapa.hpp"
 using namespace std;
 int main(){
 	init();

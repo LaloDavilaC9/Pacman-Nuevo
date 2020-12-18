@@ -1,6 +1,6 @@
 #include <iostream>
 #include <allegro.h>
-#include "Mapa.h"
+#include "Mapa.hpp"
 
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
@@ -204,7 +204,7 @@ void menu(int Opcion) {
 							jugador=registro.registroEnArchivo();//Un nuevo usuario fue registrado en el archivo
 							if(jugador->getNom().size()!=0){
 								mapa.motorJuego(jugador);
-								cout<<"HOLA"<<endl;
+								//cout<<"HOLA"<<endl;
 								//motorJuego(registroUsuario,pIdentificacion,pNivel,pVidas,vectorPintarMapa,vectorMotorJuego);	
 							}
 							break;

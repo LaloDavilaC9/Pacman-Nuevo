@@ -8,7 +8,7 @@
 #define NEGRO makecol(0, 0, 0)//Color predefido
 using namespace std;
 struct Jugador{
-	unsigned int vidas, puntos, id;
+	unsigned int vidas, puntos, id,nivel;
 	char nombreU[25], password[25];
 };
 class Jugadores {
@@ -31,13 +31,6 @@ public:
 	unsigned int getVidas(){return this->vidas;}
     unsigned int getPuntos() { return puntos; }
     unsigned int getNivel(){return this->nivel;}
-    char *convertir(string var){
-    	char x[25];
-    	for(int i=0;i<var.size();i++){
-    		x[i]=var[i];
-		}
-		return x;
-	}
 };
 
 class HistorialJugadores {
@@ -187,6 +180,7 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 	archivo.seekp(0, ios::end);
     canReg=archivo.tellg()/sizeof(Jugador);
 	jug->setID(canReg+1);
+	cout<<"Id nuevo debe de ser "<<jug->getId()<<endl;
 	jug->setVidas(3);
 	jug->setPuntos(0);
 	strcpy(auxiliarArchivo.nombreU,jug->getNom().c_str());
@@ -237,9 +231,14 @@ void HistorialJugadores::ganadores() {
 			blit(advertencia,screen,0,0,0,0,900,600);
 		}while(!key[KEY_ESC]);
 	}
+	archivo.seekg(0,ios::end);
+	int tamano=archivo.tellg()/sizeof(Jugador);
+	cout<<"El tamano del archivo es "<<tamano<<endl;
     archivo.seekg(0,ios::beg);
-    while (!archivo.eof()) {
+
+    for(int i=0;i<tamano;i++){
     	//archivo.read(reinterpret_cast<char*>(&lector), sizeof(Jugadores));
+    	archivo.seekg(i*sizeof(Jugador),ios::beg);
        	archivo.read((char*)&lector, sizeof(Jugador));
        	//cout<<"ID "<<lecto<<" Nombre: "<<lector.getNom()<<" puntos: "<<lector.getPuntos()<<endl;
         aux.push_back(lector);

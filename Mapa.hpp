@@ -3,8 +3,7 @@
 #define MAPA_H_INCLUDED
 
 #define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
-#define PUNTOS 270 //Importante no usar un valor menor a 0 ni mayor a 270
-#define VELOCIDAD 50 //Importante no usar valores negativos
+#define VELOCIDAD 200 //Importante no usar valores negativos
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
 

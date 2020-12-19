@@ -9,6 +9,7 @@
 
 class Pacman;
 class Clyde;
+class Blinky;
 
 class Mapa {
 	private:
@@ -38,7 +39,7 @@ class Mapa {
 		void setMatrizJuego(int i, int j, int valor){this->matrizJuego[i][j]=valor;}
 		int getMatrizJuego(int i, int j){return this->matrizJuego[i][j];}
 		int getSonido(){return this->sonido;}
-		void reiniciarFantasmas(Clyde &,Pacman &);
+		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky);
 };
 
 Mapa::Mapa() {
@@ -420,6 +421,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	//Creamos a Pacman
 	Pacman pacman;
 	Clyde clyde(10,10,14);
+	Blinky blinky(7,10,15);
 	HistorialJugadores auxiliarArchivo;
 	int l=0,l1=0,l2=0,vez=0,vezFruta=0,vezCargar=0,puntosScoreFinal,newkey,newkey2;
 	char ASCII,ASCII2;
@@ -446,6 +448,10 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 					clyde.posJ=14;
 					this->matrizJuego[10][14]=10;
 					clyde.sacarFantasmas(*this);
+					blinky.posI=10;
+					blinky.posJ=15;
+					this->matrizJuego[10][15]=7;
+					blinky.sacarFantasmas(*this);
 					
 				}
 				pacman.setMato(0);
@@ -454,9 +460,10 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				cout<<"YAA MURIOO"<<endl;
 			if(!pacman.getMuerto()){
 				clyde.movimientoNormal(*this,vez,pacman);
+				blinky.movimientoNormal(*this, vez, pacman);
 			}
 			if(pacman.getMuerto()){
-				this->reiniciarFantasmas(clyde, pacman);
+				this->reiniciarFantasmas(clyde, pacman, blinky);
 				
 					cout<<"Despues de reiniciar Pos I "<<clyde.getI()<<" Pos J "<<clyde.getJ()<<endl;
 
@@ -656,12 +663,15 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	//}while(true);
 }
 
-void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman){
+void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky){
 	this->matrizJuego[clyde.getI()][clyde.getJ()]=2;
 	clyde.setPos(10,14);
 	this->matrizJuego[10][14]=10;
 	this->matrizJuego[pacman.getI()][pacman.getJ()]=2;
 	pacman.setPos(14,14);
 	this->matrizJuego[14][14]=0;
+	this->matrizJuego[blinky.getI()][blinky.getJ()]=2;
+	blinky.setPos(10,15);
+	this->matrizJuego[10][15]=7;
 }
 #endif

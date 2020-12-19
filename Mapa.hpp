@@ -438,8 +438,12 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		l=0;
 		do{//Ciclo interno  a realizar mientras no haya un cambio de nivel o un perdedor
 			pacman.movimiento(*this,*jugadorActual);
-			if(!pacman.getMuerto())
+			if(pacman.getMuerto())
+				cout<<"YAA MURIOO"<<endl;
+			if(!pacman.getMuerto()){
+				cout<<"Fantasma"<<endl;
 				clyde.movimientoNormal(*this,vez,pacman);
+			}
 			if(pacman.getMuerto()){
 				cout<<"Hola"<<endl;
 				this->reiniciarFantasmas(clyde, pacman);
@@ -635,6 +639,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	}
 	set_volume(45, 45);//Reducimos el nivel de volumen al original
 	clear_keybuf();//Borramos el buffer*/
+	clear(this->buffer);
 	//}while(true);
 }
 

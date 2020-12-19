@@ -140,10 +140,11 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder){//El poder está desactivado, por lo tanto Pacman pierde una vida
 						//play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
-						mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
+						/*mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Se borra la posición en donde estaba pacman. Pacman ya había comido, por lo tanto se le deja un espacio libre=2	
 						this->posI=14;
-						this->posJ=14;
+						this->posJ=14;*/
+						this->setMuerto(true);
 					}
 					else{//El poder está activado, por lo tanto Pacman puede seguir y comerse al fantasma que le indicó el "*pQuien"
 						//play_sample(muerteFantasma,200,150,1000,0);//Se activa el sonido de la muerte de un fantasma
@@ -191,10 +192,11 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder){//El poder está desactivado, por lo tanto Pacman pierde una vida
 						//play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
-						mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
+						/*mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Se borra la posición en donde estaba pacman. Pacman ya había comido, por lo tanto se le deja un espacio libre=2	
 						this->posI=14;
-						this->posJ=14;
+						this->posJ=14;*/
+						this->setMuerto(true);
 					}
 					else{//El poder está activado, por lo tanto Pacman puede seguir y comerse al fantasma que le indicó el "*pQuien"
 						//play_sample(muerteFantasma,200,150,1000,0);//Se activa el sonido de la muerte de un fantasma
@@ -241,10 +243,11 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder){//El poder está desactivado, por lo tanto Pacman pierde una vida
 						//play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
-						mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
+						/*mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Se borra la posición en donde estaba pacman. Pacman ya había comido, por lo tanto se le deja un espacio libre=2	
 						this->posI=14;
-						this->posJ=14;
+						this->posJ=14;*/
+						this->setMuerto(true);
 					}
 					else{//El poder está activado, por lo tanto Pacman puede seguir y comerse al fantasma que le indicó el "*pQuien"
 						//play_sample(muerteFantasma,200,150,1000,0);//Se activa el sonido de la muerte de un fantasma

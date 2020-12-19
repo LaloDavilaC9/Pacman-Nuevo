@@ -446,6 +446,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 					clyde.posJ=14;
 					this->matrizJuego[10][14]=10;
 					clyde.sacarFantasmas(*this);
+					
 				}
 				pacman.setMato(0);
 			}

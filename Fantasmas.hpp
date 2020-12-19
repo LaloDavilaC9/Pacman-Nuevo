@@ -118,10 +118,14 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
 							this->posI=10;
 							this->posJ=14;//Regresamos el fantasma a su casa
 						}
-						else{
+						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
+							cout<<"Fantasma mata a Pacman"<<endl;
+							this->posI=auxI;
+							this->posJ=auxJ;
 							pacman.setMuerto(true);
+							cout<<"Antes Pos I "<<this->getI()<<" Pos J "<<this->getJ()<<endl;
+		
 						}
-						//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
 						
 					}
 					else{//Se encontró cualquier otra cosa

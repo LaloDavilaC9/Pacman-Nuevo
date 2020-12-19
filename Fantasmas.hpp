@@ -202,15 +202,15 @@ public:
 							break;
 					}
 					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
-						if(pacman.getPoder() && pacman.getComible(3)){//Se muere el fantasma
+						if(pacman.getPoder() && pacman.getComible(0)){//Se muere el fantasma
 							this->comibles=false;
 							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
 							this->posI=10;
 							this->posJ=15;//Regresamos el fantasma a su casa
 							mapa.setMatrizJuego(10,15,7);
 							this->sacarFantasmas(mapa);
-							pacman.setComibles(3,false);
-							mapa.setPausaF(3,1);//Está normal el Fantasma, ya no está asustado
+							pacman.setComibles(0,false);
+							mapa.setPausaF(0,1);//Está normal el Fantasma, ya no está asustado
 						}
 						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
 							this->posI=auxI;

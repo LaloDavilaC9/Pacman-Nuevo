@@ -117,14 +117,13 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
 							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
 							this->posI=10;
 							this->posJ=14;//Regresamos el fantasma a su casa
+							pacman.setComibles(3,false);
+							mapa.setPausaF(3,1);//Está normal el Fantasma, ya no está asustado
 						}
 						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
-							cout<<"Fantasma mata a Pacman"<<endl;
 							this->posI=auxI;
 							this->posJ=auxJ;
-							pacman.setMuerto(true);
-							cout<<"Antes Pos I "<<this->getI()<<" Pos J "<<this->getJ()<<endl;
-		
+							pacman.setMuerto(true);	
 						}
 						
 					}

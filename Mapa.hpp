@@ -645,10 +645,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 }
 
 void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman){
-	cout<<"Reiniciamos"<<endl;
-	cout<<"Pos I "<<clyde.getI()<<" Pos J "<<clyde.getJ()<<endl;
 	this->matrizJuego[clyde.getI()][clyde.getJ()]=2;
-	cout<<"MATRIZ DEL JUEGO EN ESA POSICION "<<this->matrizJuego[clyde.getI()][clyde.getJ()]<<endl;
 	clyde.setPos(10,14);
 	this->matrizJuego[10][14]=10;
 	this->matrizJuego[pacman.getI()][pacman.getJ()]=2;

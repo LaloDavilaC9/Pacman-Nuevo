@@ -13,14 +13,20 @@ public:
         this->direccion = 0;
         this->comibles = false;
     }
-    virtual void movimientoNormal(Mapa &, int) = 0;
+    virtual void movimientoNormal(Mapa &, int,Pacman &) = 0;
     //virtual void movimientoPersecucion() = 0;
     //virtual void movimientoHuida() = 0;
     //int* posiciones();
     //bool matarPacman(int*, bool);
     //void regeneracion();
-    //bool movimientoValido(int*[]);
+   	bool movimientoValido(Mapa &mapa);
     void sacarFantasmas(Mapa &);
+    void setPos(int i, int j){
+		this->posI=i;
+		this->posJ=j;
+	}
+	int getI(){return this->posI;}
+	int getJ(){return this->posJ;}
 };
 
 #include "Mapa.hpp"
@@ -32,11 +38,15 @@ void Fantasmas::sacarFantasmas(Mapa &mapa){
 	for(j=12;j<18;j++){
 		if(mapa.getMatrizJuego(i,j)==2 || mapa.getMatrizJuego(i,j)==5){//Posición libre para avanzar			
 			mapa.setMatrizJuego(i,j,this->id);
+			this->posI=i;
+			this->posJ=j;
 			band=1;
 			return;
 		}
 		else if(mapa.getMatrizJuego(k,j)==2 || mapa.getMatrizJuego(k,j)==5){
 			mapa.setMatrizJuego(k,j,this->id);
+			this->posI=k;
+			this->posJ=j;
 			band=1;
 			return;
 		}
@@ -47,10 +57,14 @@ void Fantasmas::sacarFantasmas(Mapa &mapa){
 		for(i=7;i<13;i++){
 			if(mapa.getMatrizJuego(i,j)==2 || mapa.getMatrizJuego(i,j)==5 ){//Posición libre para avanzar
 				mapa.setMatrizJuego(i,j,this->id);
+				this->posI=i;
+				this->posJ=j;
 				return;
 			}			
 			else if(mapa.getMatrizJuego(i,k)==2 || mapa.getMatrizJuego(i,k)==5){
 				mapa.setMatrizJuego(i,k,this->id);
+				this->posI=i;
+				this->posJ=k;
 				return;
 			}
 		}
@@ -67,11 +81,55 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
 	public:
 		Clyde() : Fantasmas(){}
 		Clyde(int id,int i, int j) : Fantasmas(id,i,j){}
-    	void movimientoNormal(Mapa &mapa, int vez){
-    		if(vez==6)//Lo sacamos de su casa por primera vez
+    	void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman){
+    		int auxI=this->posI,auxJ=this->posJ,valorPre=2;
+    		if(vez==6){//Lo sacamos de su casa por primera vez
     			this->sacarFantasmas(mapa);
-    		else if(vez>6){//Comienza su movimiento normal
+    			mapa.setMatrizJuego(10,14,2);
+			}
     			
+    		else if(vez>6){//Comienza su movimiento normal
+    			srand(time(NULL));
+				this->direccion=rand()%4+1;//Generamos random un número para que se mueva 1=Derecha 2=Izquierda 3=Arriba 4=Abajo
+				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
+					switch(this->direccion){
+	    				case 1://Arriba
+	    					mapa.setDirecciones(4,4);//Apunta hacia arriba en el mapa
+							this->posI-=1;
+							break;
+						case 2://Abajo
+							mapa.setDirecciones(4,3);//Apunta hacia arriba en el mapa
+							this->posI+=1;
+							break;
+						case 3://Izquierda
+							mapa.setDirecciones(4,1);//Apunta hacia arriba en el mapa
+							this->posJ-=1;
+							
+							break;
+						case 4://Derecha
+							mapa.setDirecciones(4,2);//Apunta hacia arriba en el mapa
+							this->posJ+=1;
+							break;
+					}
+					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
+						if(pacman.getPoder()){//Se muere el fantasma
+							this->comibles=false;
+							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
+							this->posI=10;
+							this->posJ=14;//Regresamos el fantasma a su casa
+						}
+						else{
+							pacman.setMuerto(true);
+						}
+						//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
+						
+					}
+					else{//Se encontró cualquier otra cosa
+						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
+						mapa.setMatrizJuego(this->posI,this->posJ,10);
+						mapa.setMatrizJuego(auxI,auxJ,valorPre);
+					}		
+				}
 			}
 		}
 		/*
@@ -79,6 +137,44 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
     		cout<<"Holi"<<endl;
 		}*/
 };
+
+bool Fantasmas::movimientoValido(Mapa &mapa) {
+    switch (this->direccion) {
+	    case 1://Arriba
+	        return (mapa.getMatrizJuego(this->posI-1,this->posJ)!=1);   //[posX - 1][posY] != 1 );
+	        break;
+	    case 2://Abajo
+	        return (mapa.getMatrizJuego(this->posI+1,this->posJ)!=1);//(mapa.matrizJuego[posX + 1][posY] != 1 );
+	        break;
+	    case 3://Izquierda, verificación de Teleport de Izquierda a Derecha
+	    	if(this->posI==10 && this->posJ-1==0){
+	    		mapa.setMatrizJuego(10,29,this->id);//Ponemos al fantasma en su nueva posición
+				mapa.setMatrizJuego(10,0,2);//mapa.matrizJuego[10][0]=2;//Borra la posición anterior
+				mapa.setMatrizJuego(10,1,2);//mapa.matrizJuego[10][1]=2;//Borra la posición ANTE Anterior
+				this->posI=10;
+				this->posJ=29;
+				return false;
+			}
+	        return (mapa.getMatrizJuego(this->posI,this->posJ-1)!=1);//(mapa.matrizJuego[posX][posY - 1] != 1 );
+	        break;
+	    case 4://Derecha, verificación de Teleport de Derecha a Izquierda
+	    	if(this->posI==10 && this->posJ+1==29){
+	    		mapa.setMatrizJuego(10,0,this->id);//Ponemos al fantasma en su nueva posición
+				mapa.setMatrizJuego(10,29,2);//mapa.matrizJuego[10][29]=2;//Borra la posición anterior
+				mapa.setMatrizJuego(10,28,2);//mapa.matrizJuego[10][28]=2;//Borra la posición ANTE Anterior
+				this->posI=10;
+				this->posJ=0;
+				return false;
+			}
+	        return (mapa.getMatrizJuego(this->posI,this->posJ+1)!=1);//(mapa.matrizJuego[posX][posY + 1] != 1 );
+	        break;
+	    default:
+	        return false;
+	        break;
+    }
+}
+
+
 
 /*
 class Inky : public Fantasmas {

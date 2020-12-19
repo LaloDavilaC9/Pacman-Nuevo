@@ -38,6 +38,7 @@ class Mapa {
 		void setMatrizJuego(int i, int j, int valor){this->matrizJuego[i][j]=valor;}
 		int getMatrizJuego(int i, int j){return this->matrizJuego[i][j];}
 		int getSonido(){return this->sonido;}
+		void reiniciarFantasmas(Clyde &,Pacman &);
 };
 
 Mapa::Mapa() {
@@ -436,8 +437,15 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		}while(l!=900);
 		l=0;
 		do{//Ciclo interno  a realizar mientras no haya un cambio de nivel o un perdedor
-			pacman.movimiento(*this);
-			clyde.movimientoNormal(*this,vez);
+			pacman.movimiento(*this,*jugadorActual);
+			clyde.movimientoNormal(*this,vez,pacman);
+			if(pacman.getMuerto()){
+				//this->reiniciarFantasmas(clyde, pacman);
+				//vez=0;
+				//pacman.setMuerto(false);
+				//jugadorActual->setVidas(jugadorActual->getVidas()-1);
+				//auxiliarArchivo.modificarInformacion(*jugadorActual,0);// Esta validación impide al usuario hacer trampas de salirse a la mitad de un nivel para poder reiniciar sus vidas y le impide incrementar de forma tramposa su puntaje
+			}
 			//movimientoPacman(matrizJuego,vecPos,pvez,pcomida,pVidas,puntuacionTotal,pCambioNivel,pDir,registroUsuarios,pIdentificacion,pFrutas,pQuien,pPausaF,dificultad,sonidoActivo);//Le permitimos al Pacman moverse
 			//fantasmas(matrizJuego,vez,vecPos,pvez,pcomida,pVidas,pDirF1,pDirF2,pDirF3,pDirF4,pPausaF,dificultad);//Llama a los 4 fantasmas, según corresponda por el valor del "pvez#"
 			if(vez%4==0){//Este if controla la animación del Pacman comiendo
@@ -626,5 +634,12 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	set_volume(45, 45);//Reducimos el nivel de volumen al original
 	clear_keybuf();//Borramos el buffer*/
 	//}while(true);
+}
+
+void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman){
+	this->matrizJuego[clyde.getI()][clyde.getJ()]=2;
+	clyde.setPos(10,14);
+	this->matrizJuego[pacman.getI()][pacman.getJ()]=2;
+	pacman.setPos(14,14);
 }
 #endif

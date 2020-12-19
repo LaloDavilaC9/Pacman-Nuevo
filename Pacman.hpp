@@ -3,20 +3,29 @@
 #define PUNTOS 270 //Importante no usar un valor menor a 0 ni mayor a 270
 
 class Mapa;
-
 class Pacman {
 	private:
 		int posI, posJ, direccion,contPoder;
-		bool poder;
+		bool poder,muerto;
 	public:
 		Pacman();
-		void movimiento(Mapa &mapa);
+		void movimiento(Mapa &mapa,Jugadores &);
 		bool movimientoValido(Mapa &mapa);
 		void tienePoder(Mapa &mapa);
 		bool getPoder(){return this->poder;}
 		void setPoder(bool p){this->poder=p;}
 		void puntaje(Mapa &mapa);
 		bool morirPacman(Mapa &mapa);
+		void setPos(int i, int j){
+			this->posI=i;
+			this->posJ=j;
+		}
+		int getI(){return this->posI;}
+		int getJ(){return this->posJ;}
+		void setMuerto(bool x){
+			this->muerto=x;
+		}
+		bool getMuerto(){this->muerto;}
 };
 
 Pacman::Pacman() {
@@ -24,12 +33,13 @@ Pacman::Pacman() {
 	this->posJ = 14;
 	this->direccion = 0;
 	this->poder=false;
+	this->muerto=false;
 	this->contPoder=0;
 }
 
 #include "Mapa.hpp"
 
-void Pacman::movimiento(Mapa &mapa) {
+void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 	int auxI,auxJ,x,buscar;
 	if(key[KEY_UP] || key[KEY_W]) {
 		//*pDir=4;//Dirección de la imagen de Pacman -> ¿A dónde apunta Pacman?
@@ -76,6 +86,7 @@ void Pacman::movimiento(Mapa &mapa) {
 						//play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
 						//reiniciarFantasmas(matrizJuego,pvez);//Metemos a todos los fantasmas a su casa para que podamos sacarlos con orden
 						//reiniciarPacman(matrizJuego,pVidas);//Pacman regresa a su punto de origen
+						jugadorActual.setVidas(jugadorActual.getVidas()-1);
 						mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Se borra la posición en donde estaba pacman. Pacman ya había comido, por lo tanto se le deja un espacio libre=2	
 						this->posI=14;

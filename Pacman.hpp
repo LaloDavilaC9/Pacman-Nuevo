@@ -1,6 +1,6 @@
 #ifndef PACMAN_H_INCLUDED
 #define PACMAN_H_INCLUDED
-#define PUNTOS 270 //Importante no usar un valor menor a 0 ni mayor a 270
+#define PUNTOS 0 //Importante no usar un valor menor a 0 ni mayor a 270
 
 class Mapa;
 class Pacman {
@@ -25,7 +25,7 @@ class Pacman {
 		void setMuerto(bool x){
 			this->muerto=x;
 		}
-		bool getMuerto(){this->muerto;}
+		bool getMuerto(){return this->muerto;}
 };
 
 Pacman::Pacman() {
@@ -86,11 +86,12 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						//play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
 						//reiniciarFantasmas(matrizJuego,pvez);//Metemos a todos los fantasmas a su casa para que podamos sacarlos con orden
 						//reiniciarPacman(matrizJuego,pVidas);//Pacman regresa a su punto de origen
-						jugadorActual.setVidas(jugadorActual.getVidas()-1);
-						mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
-						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Se borra la posición en donde estaba pacman. Pacman ya había comido, por lo tanto se le deja un espacio libre=2	
-						this->posI=14;
-						this->posJ=14;
+						//jugadorActual.setVidas(jugadorActual.getVidas()-1);
+						//mapa.setMatrizJuego(14,14,0);//[14][14]=0;//Reseteamos a pacman	
+						//mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Se borra la posición en donde estaba pacman. Pacman ya había comido, por lo tanto se le deja un espacio libre=2	
+						//this->posI=14;
+						//this->posJ=14;
+						this->setMuerto(true);
 					}
 					else{//El poder está activado, por lo tanto Pacman puede seguir y comerse al fantasma que le indicó el "*pQuien"
 						//play_sample(muerteFantasma,200,150,1000,0);//Se activa el sonido de la muerte de un fantasma

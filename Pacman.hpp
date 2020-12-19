@@ -5,7 +5,7 @@
 class Mapa;
 class Pacman {
 	private:
-		int posI, posJ, direccion,contPoder;
+		int posI, posJ, direccion,contPoder,mato;
 		bool poder,muerto,comibles[4];
 	public:
 		Pacman();
@@ -29,6 +29,11 @@ class Pacman {
 		void setComibles(int pos,bool x){
 			this->comibles[pos]=x;
 		}
+		bool getComible(int x){return this->comibles[x];}
+		int getMato(){return this->mato;}
+		void setMato(int x){
+			this->mato=x;
+		}
 };
 
 Pacman::Pacman() {
@@ -38,6 +43,7 @@ Pacman::Pacman() {
 	this->poder=false;
 	this->muerto=false;
 	this->contPoder=0;
+	this->mato=0;
 	for(int i=0;i<4;i++)
 		this->comibles[i]=false;
 }
@@ -87,7 +93,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 							break;
 					}
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
-					if(!this->poder && !this->comibles[buscar-7]){//El poder está desactivado, por lo tanto Pacman pierde una vida
+					if(!this->poder){//El poder está desactivado, por lo tanto Pacman pierde una vida
 						//play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
 						//reiniciarFantasmas(matrizJuego,pvez);//Metemos a todos los fantasmas a su casa para que podamos sacarlos con orden
 						//reiniciarPacman(matrizJuego,pVidas);//Pacman regresa a su punto de origen
@@ -104,8 +110,14 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						mapa.setPausaF(buscar-7,1);//Encendemos la pausa al fantasma que corresponda. Buscar tiene valores a partir del 7 al 10, pero el vector pPausaF comienza en 0, por lo tanto a buscar le restamos 7 y ahora tenemos la posición indicada para pausar
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Borramos la posición anterior a Pacman
 						mapa.setMatrizJuego(this->posI-1,this->posJ,0);//[this->posI-1][this->posJ]=0;//Movemos a Pacman
+						this->mato=buscar-6;
 						this->posI-=1;
 					}
+					else{
+						this->setMuerto(true);
+						this->setPoder(false);
+					}
+					
 			}
 		}
 	}
@@ -157,7 +169,12 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Borramos la posición anterior a Pacman
 						mapa.setMatrizJuego(this->posI,this->posJ-1,0);//[this->posI][this->posJ-1]=0;//Movemos a Pacman
 						this->posJ-=1;
-				}	
+						this->mato=buscar-6;
+					}
+					else{
+						this->setMuerto(true);
+						this->setPoder(false);
+					}
 			}
 		}
 	}
@@ -209,7 +226,12 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Borramos la posición anterior a Pacman
 						mapa.setMatrizJuego(this->posI,this->posJ+1,0);//[this->posI][this->posJ-1]=0;//Movemos a Pacman
 						this->posJ+=1;
-				}	
+						this->mato=buscar-6;
+					}
+					else{
+						this->setMuerto(true);
+						this->setPoder(false);
+					}
 			}
 		}
 	}
@@ -260,7 +282,12 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Borramos la posición anterior a Pacman
 						mapa.setMatrizJuego(this->posI+1,this->posJ,0);//[this->posI][this->posJ-1]=0;//Movemos a Pacman
 						this->posI+=1;
-				}	
+						this->mato=buscar-6;
+					}
+					else{
+						this->setMuerto(true);
+						this->setPoder(false);
+					}
 			}
 		}
 		

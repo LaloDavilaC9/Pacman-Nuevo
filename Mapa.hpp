@@ -438,6 +438,17 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		l=0;
 		do{//Ciclo interno  a realizar mientras no haya un cambio de nivel o un perdedor
 			pacman.movimiento(*this,*jugadorActual);
+			if(pacman.getMato()!=0){//El pacman acaba de matar a alguien
+				if(pacman.getMato()==1){//Mató al fantasma 7
+				}
+				else if(pacman.getMato()==4){
+					clyde.posI=10;
+					clyde.posJ=14;
+					this->matrizJuego[10][14]=10;
+					clyde.sacarFantasmas(*this);
+				}
+				pacman.setMato(0);
+			}
 			if(pacman.getMuerto())
 				cout<<"YAA MURIOO"<<endl;
 			if(!pacman.getMuerto()){

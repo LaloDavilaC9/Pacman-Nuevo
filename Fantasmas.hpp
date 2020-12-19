@@ -1,6 +1,6 @@
 #pragma once
 class Mapa;
-
+#include <cmath>
 class Fantasmas {
 public:
     int id, posI, posJ, direccion;
@@ -27,6 +27,20 @@ public:
 	}
 	int getI(){return this->posI;}
 	int getJ(){return this->posJ;}
+	int distancia(int iF, int jF, int i, int j) {
+		return (abs(iF-i)+abs(jF-j));
+	}
+	int distanciaMenor(int dis[]) {
+		int menor=dis[0];
+		int indi=1;
+		for(int i=0; i<4; i++) {
+			if(dis[i]<menor) {
+				menor=dis[i];
+				indi=i+1;
+			}		
+		}
+		return indi;
+	}
 };
 
 #include "Mapa.hpp"
@@ -71,12 +85,6 @@ void Fantasmas::sacarFantasmas(Mapa &mapa){
 	}
 }
 
-class Blinky : public Fantasmas {
-public:
-    void movimientoNormal();
-    void movimientoPersecucion();
-    void movimientoHuida();
-};
 class Clyde : public Fantasmas { //ID = 10  Naranja
 	public:
 		Clyde() : Fantasmas(){}
@@ -142,6 +150,86 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
     	void movimientoPersecucion(){
     		cout<<"Holi"<<endl;
 		}*/
+};
+class Blinky : public Fantasmas { //ID = 7 Rojo
+public:
+	Blinky(int id, int i, int j) : Fantasmas(id,i,j){}
+    void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman) {
+    	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
+    	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
+    		if(vez==15){//Lo sacamos de su casa por primera vez
+    			this->sacarFantasmas(mapa);
+    			mapa.setMatrizJuego(10,15,2);
+			}
+    			
+    		else if(vez>15){//Comienza su movimiento normal
+    			if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
+    				distancias[0]=distancia(posI-1, posJ, pacman.getI(), pacman.getJ());//Arriba
+    			else 
+    				distancias[0]=9999;
+    			if(mapa.getMatrizJuego(posI+1, posJ)!=1) 
+    				distancias[1]=distancia(posI+1, posJ, pacman.getI(), pacman.getJ());//Abajo
+    			else 
+    				distancias[1]=9999;
+    			if(mapa.getMatrizJuego(posI, posJ-1)!=1) 
+    				distancias[2]=distancia(posI, posJ-1, pacman.getI(), pacman.getJ());//Izquierda
+    			else 
+    				distancias[2]=9999;
+    			if(mapa.getMatrizJuego(posI, posJ+1)!=1) 
+    				distancias[3]=distancia(posI, posJ+1, pacman.getI(), pacman.getJ());//Derecha
+    			else 
+    				distancias[3]=9999;
+    			direccion=distanciaMenor(distancias);
+    			cout<<direccion<<endl;
+				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
+					switch(this->direccion){
+	    				case 1://Arriba
+	    					mapa.setDirecciones(1,4);//Apunta hacia arriba en el mapa
+							this->posI-=1;
+							break;
+						case 2://Abajo
+							mapa.setDirecciones(1,3);//Apunta hacia arriba en el mapa
+							this->posI+=1;
+							break;
+						case 3://Izquierda
+							mapa.setDirecciones(1,1);//Apunta hacia arriba en el mapa
+							this->posJ-=1;
+							
+							break;
+						case 4://Derecha
+							mapa.setDirecciones(1,2);//Apunta hacia arriba en el mapa
+							this->posJ+=1;
+							break;
+					}
+					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
+						if(pacman.getPoder() && pacman.getComible(3)){//Se muere el fantasma
+							this->comibles=false;
+							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
+							this->posI=10;
+							this->posJ=15;//Regresamos el fantasma a su casa
+							mapa.setMatrizJuego(10,15,7);
+							this->sacarFantasmas(mapa);
+							pacman.setComibles(3,false);
+							mapa.setPausaF(3,1);//Está normal el Fantasma, ya no está asustado
+						}
+						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
+							this->posI=auxI;
+							this->posJ=auxJ;
+							pacman.setMuerto(true);	
+							pacman.setPoder(false);
+						}
+						
+					}
+					else{//Se encontró cualquier otra cosa
+						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
+						mapa.setMatrizJuego(this->posI,this->posJ,7);
+						mapa.setMatrizJuego(auxI,auxJ,valorPre);
+					}		
+				} 		
+			}
+		}
+    //void movimientoPersecucion();
+    //void movimientoHuida();
 };
 
 bool Fantasmas::movimientoValido(Mapa &mapa) {

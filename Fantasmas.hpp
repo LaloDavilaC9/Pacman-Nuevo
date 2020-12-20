@@ -1,6 +1,8 @@
 #pragma once
 class Mapa;
 #include <cmath>
+#include <vector>
+#include <algorithm>
 class Fantasmas {
 public:
     int id, posI, posJ, direccion;
@@ -38,6 +40,23 @@ public:
 				menor=dis[i];
 				indi=i+1;
 			}		
+		}
+		return indi;
+	}
+	int distanciaMayor(int dis[]){
+		vector <int> copiaDis;
+		int menor=0;
+		int indi=1;
+		for(int i=0; i<4; i++) {
+			copiaDis.push_back(dis[i]);
+		}
+		sort(copiaDis.begin(),copiaDis.end());
+		for(int i=0;i<4;i++){
+			if(copiaDis[1]==dis[i]){
+				indi=i+1;
+				break;
+			}
+			
 		}
 		return indi;
 	}
@@ -157,12 +176,12 @@ public:
     void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman) {
     	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
     	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
-    		if(vez==15){//Lo sacamos de su casa por primera vez
+    		if(vez==41){//Lo sacamos de su casa por primera vez
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(10,15,2);
 			}
     			
-    		else if(vez>15){//Comienza su movimiento normal
+    		else if(vez>41){//Comienza su movimiento normal
     			if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
     				distancias[0]=distancia(posI-1, posJ, pacman.getI(), pacman.getJ());//Arriba
     			else 
@@ -231,6 +250,92 @@ public:
     //void movimientoPersecucion();
     //void movimientoHuida();
 };
+class Pinky : public Fantasmas{//ID: 9
+public:
+	Pinky(int id, int i, int j) : Fantasmas(id,i,j){}
+    void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman) {
+    	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
+    	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
+    		if(vez==25){//Lo sacamos de su casa por primera vez
+    			this->sacarFantasmas(mapa);
+    			mapa.setMatrizJuego(9,14,2);
+			}
+    			
+    		else if(vez>25){//Comienza su movimiento normal
+    			if(pacman.getI()==this->posI){//Están en la misma fila
+					if(pacman.getJ() > this->posJ)//Quiere decir que el pacman  está a la derecha
+						this->direccion=4;
+					else if(pacman.getJ() < this->posJ)//Quiere decir que el pacman está a la izquierda
+						this->direccion=3;
+				}
+    			else if(pacman.getJ()==this->posJ){
+    				if(pacman.getI() > this->posI)//Pacman está abajo
+						this->direccion=2;
+					else if(pacman.getI() < this->posI)//Pacman está arriba
+						this->direccion=1;
+				}
+				else{
+					if(pacman.getJ() > this->posJ)//Quiere decir que el pacman  está a la derecha
+						this->direccion=4;
+					else if(pacman.getJ() < this->posJ)//Quiere decir que el pacman está a la izquierda
+						this->direccion=3;
+					else if(pacman.getI() > this->posI)//Pacman está abajo
+						this->direccion=2;
+					else if(pacman.getI() < this->posI)//Pacman está arriba
+						this->direccion=1;
+				}
+			
+				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
+					switch(this->direccion){
+	    				case 1://Arriba
+	    				
+	    					mapa.setDirecciones(3,4);//Apunta hacia arriba en el mapa
+							this->posI-=1;
+							break;
+						case 2://Abajo
+							mapa.setDirecciones(3,3);//Apunta hacia arriba en el mapa
+							this->posI+=1;
+							break;
+						case 3://Izquierda
+							mapa.setDirecciones(3,1);//Apunta hacia arriba en el mapa
+							this->posJ-=1;
+							
+							break;
+						case 4://Derecha
+							mapa.setDirecciones(3,2);//Apunta hacia arriba en el mapa
+							this->posJ+=1;
+							break;
+					}
+					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
+						if(pacman.getPoder() && pacman.getComible(0)){//Se muere el fantasma
+							this->comibles=false;
+							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
+							this->posI=9;
+							this->posJ=14;//Regresamos el fantasma a su casa
+							mapa.setMatrizJuego(9,14,9);
+							this->sacarFantasmas(mapa);
+							pacman.setComibles(0,false);
+							mapa.setPausaF(2,1);//Está normal el Fantasma, ya no está asustado
+						}
+						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
+							this->posI=auxI;
+							this->posJ=auxJ;
+							pacman.setMuerto(true);	
+							pacman.setPoder(false);
+						}
+						
+					}
+					else{//Se encontró cualquier otra cosa
+						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
+						mapa.setMatrizJuego(this->posI,this->posJ,9);
+						mapa.setMatrizJuego(auxI,auxJ,valorPre);
+					}		
+				} 		
+			}
+		}
+	
+};
+
 
 bool Fantasmas::movimientoValido(Mapa &mapa) {
     switch (this->direccion) {

@@ -10,6 +10,7 @@
 class Pacman;
 class Clyde;
 class Blinky;
+class Pinky;
 
 class Mapa {
 	private:
@@ -39,7 +40,7 @@ class Mapa {
 		void setMatrizJuego(int i, int j, int valor){this->matrizJuego[i][j]=valor;}
 		int getMatrizJuego(int i, int j){return this->matrizJuego[i][j];}
 		int getSonido(){return this->sonido;}
-		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky);
+		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky,Pinky &);
 };
 
 Mapa::Mapa() {
@@ -422,6 +423,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	Pacman pacman;
 	Clyde clyde(10,10,14);
 	Blinky blinky(7,10,15);
+	Pinky pinky(9,9,14);
 	HistorialJugadores auxiliarArchivo;
 	int l=0,l1=0,l2=0,vez=0,vezFruta=0,vezCargar=0,puntosScoreFinal,newkey,newkey2;
 	char ASCII,ASCII2;
@@ -442,31 +444,41 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			pacman.movimiento(*this,*jugadorActual);
 			if(pacman.getMato()!=0){//El pacman acaba de matar a alguien
 				if(pacman.getMato()==1){//Mató al fantasma 7
-				}
-				else if(pacman.getMato()==4){
-					clyde.posI=10;
-					clyde.posJ=14;
-					this->matrizJuego[10][14]=10;
-					clyde.sacarFantasmas(*this);
 					blinky.posI=10;
 					blinky.posJ=15;
 					this->matrizJuego[10][15]=7;
 					blinky.sacarFantasmas(*this);
 					
 				}
+				else if(pacman.getMato()==2){//Mató al fantasma 8
+	
+				}
+				else if(pacman.getMato()==3){//Mató al fantasma 9
+					pinky.posI=9;
+					pinky.posJ=14;
+					this->matrizJuego[9][14]=9;
+					pinky.sacarFantasmas(*this);
+				}
+				else if(pacman.getMato()==4){
+					clyde.posI=10;
+					clyde.posJ=14;
+					this->matrizJuego[10][14]=10;
+					clyde.sacarFantasmas(*this);	
+				}
 				pacman.setMato(0);
 			}
-			if(pacman.getMuerto())
-				cout<<"YAA MURIOO"<<endl;
 			if(!pacman.getMuerto()){
 				clyde.movimientoNormal(*this,vez,pacman);
-				blinky.movimientoNormal(*this, vez, pacman);
+			}
+			if(!pacman.getMuerto()){
+				//blinky.movimientoNormal(*this,vez,pacman);
+			}
+			if(!pacman.getMuerto()){
+				pinky.movimientoNormal(*this,vez,pacman);
 			}
 			if(pacman.getMuerto()){
-				this->reiniciarFantasmas(clyde, pacman, blinky);
-				
-					cout<<"Despues de reiniciar Pos I "<<clyde.getI()<<" Pos J "<<clyde.getJ()<<endl;
-
+				this->reiniciarFantasmas(clyde, pacman, blinky,pinky);
+	
 				vez=0;
 				pacman.setMuerto(false);
 				jugadorActual->setVidas(jugadorActual->getVidas()-1);
@@ -663,15 +675,20 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	//}while(true);
 }
 
-void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky){
+void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky,Pinky &pinky){
 	this->matrizJuego[clyde.getI()][clyde.getJ()]=2;
 	clyde.setPos(10,14);
 	this->matrizJuego[10][14]=10;
 	this->matrizJuego[pacman.getI()][pacman.getJ()]=2;
 	pacman.setPos(14,14);
 	this->matrizJuego[14][14]=0;
+	
 	this->matrizJuego[blinky.getI()][blinky.getJ()]=2;
 	blinky.setPos(10,15);
 	this->matrizJuego[10][15]=7;
+	
+	this->matrizJuego[pinky.getI()][pinky.getJ()]=2;
+	pinky.setPos(9,14);
+	this->matrizJuego[9][14]=9;
 }
 #endif

@@ -2,7 +2,7 @@
 	#include "Jugadores.hpp"
 #define MAPA_H_INCLUDED
 
-#define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
+#define NIVELMAXIMO 3 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
@@ -431,7 +431,7 @@ void Mapa::ponerFruta() {
 #include "Pacman.hpp"
 #include "Fantasmas.hpp"
 void Mapa::motorJuego(Jugadores *jugadorActual){
-	play_midi(NULL,NULL);//Frenamos la música del inicio
+	play_midi(NULL,0);//Frenamos la música del inicio
 	SAMPLE *efecto=load_wav("Elementos\\pacman-song.wav");//Tono de inicio de nivel
 	SAMPLE *muertePacman=load_sample("Elementos\\pacman-dies.wav");
 	MIDI *perderMusic =load_midi("Elementos\\Rosas.mid");
@@ -452,7 +452,8 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		this->seleccionarMapa(jugadorActual->getNivel());//Generamos el mapa con el nivel actual
 		this->dibujarMapa(jugadorActual->getNivel(),pacman.getPoder());//Cargamos todo al mapa
 		blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente
-		textprintf(buffer, font1, 400, 0, makecol(255, 255, 255), "Listo? ");//Texto de ¿listo? para antes de comenzar
+		textprintf_ex(buffer, font1, 400, 0, makecol(255, 255, 255),-1, "¿Listo?");
+		//textprintf(buffer, font1, 400, 0, makecol(255, 255, 255), "Listo? ");//Texto de ¿listo? para antes de comenzar
 		do{
 			blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos el mapa dentro de este ciclo para que la palabra "listo" aparezca algunos segundos antes de empezar a jugar
 			l++;
@@ -568,7 +569,8 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			else if(jugadorActual->getVidas()==2){//Aparecen sólo dos vidas completas en el Score
 				if(l2==1){//Con esto sabemos que el Pacman ha perdido su primer vida y se le indica de nuevo la palabra "listo" antes de volver a jugar
 					do{
-						textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Listo?      ");
+						textprintf_ex(screen, font1, 400, 0, makecol(255, 255, 255),-1, "¿Listo?");
+						//textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Listo?      ");
 						l++;
 					}while(l!=900);
 					l=0;
@@ -579,7 +581,8 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			else if(jugadorActual->getVidas()==1){//Con esto sabemos que el Pacman ha perdido su segunda vida y se le indica de nuevo la palabra "listo" antes de volver a jugar
 				if(l1==1){
 					do{
-						textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Listo?      ");
+						textprintf_ex(screen, font1, 400, 0, makecol(255, 255, 255),-1, "¿Listo?");
+						//textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Listo?      ");
 						l++;
 					}while(l!=900);
 					l=0;
@@ -599,10 +602,14 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			}
 			this->dibujarMapa(jugadorActual->getNivel(),pacman.getPoder());
 			blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente
-			textprintf(screen, font1, 0, 0, makecol(255, 153, 51), "Score: %i", this->puntuacionTotal);//Es el encargado de mostrar el Score
-			textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Nivel: %i", jugadorActual->getNivel());//Es el encargado de mostrar el nivel actual
-			textprintf(screen, font3, 690, 0, makecol(255, 255, 255), "Poder: %ir", this->dificultad);//"rep" se refiere a "repeticiones" por lo que 60, por ejemplo, significa que si Pacman toma el poder en ese momento, tardará 60 repeticiones del juego para que termine el poder
-			textprintf(screen, font1, 200, 0, makecol(255, 255, 255), "[ESC] Pausa");//"rep" se refiere a "repeticiones" por lo que 60, por ejemplo, significa que si Pacman toma el poder en ese momento, tardará 60 repeticiones del juego para que termine el poder
+			textprintf_ex(screen, font1, 0, 0, makecol(255, 153, 51),-1, "Score: %i",this->puntuacionTotal);
+			textprintf_ex(screen, font1, 400, 0, makecol(255, 255, 255),-1, "Nivel: %i",jugadorActual->getNivel());
+			textprintf_ex(screen, font3, 690, 0, makecol(255, 255, 255),-1, "Poder: %ir",this->dificultad);
+			textprintf_ex(screen, font1, 200, 0, makecol(255, 255, 255),-1, "[ESC] Pausa");
+			//textprintf(screen, font1, 0, 0, makecol(255, 153, 51), "Score: %i", this->puntuacionTotal);//Es el encargado de mostrar el Score
+			//textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Nivel: %i", jugadorActual->getNivel());//Es el encargado de mostrar el nivel actual
+			//textprintf(screen, font3, 690, 0, makecol(255, 255, 255), "Poder: %ir", this->dificultad);//"rep" se refiere a "repeticiones" por lo que 60, por ejemplo, significa que si Pacman toma el poder en ese momento, tardará 60 repeticiones del juego para que termine el poder
+			//textprintf(screen, font1, 200, 0, makecol(255, 255, 255), "[ESC] Pausa");//"rep" se refiere a "repeticiones" por lo que 60, por ejemplo, significa que si Pacman toma el poder en ese momento, tardará 60 repeticiones del juego para que termine el poder
 			vezFruta++;
 			vez++;
 			rest(VELOCIDAD);//Maneja la velocidad del juego. Entre más alto el parámetro, más lento el juego
@@ -637,6 +644,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		else if(jugadorActual->getNivel()==NIVELMAXIMO){//El usuario ganó el juego
 			set_volume(70,70);
 			play_midi(ganarMusic,1);//Inicia la música de ganador
+			cout<<"Ganador cambia a true"<<endl;
 			ganador=true;//Permitimos la salida de este ciclo
 		}
 		else
@@ -667,6 +675,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	} while(perdedor==false && ganador==false);//Ganador se activa cuando se termina el nivel 9
 	
 	if(ganador==true){//El usuario ganó el Juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
+		this->vectorMotorJuego[0]=load_bitmap("Elementos\\Felicidades.bmp", NULL);
 		l=jugadorActual->getVidas();
 		jugadorActual->setNivel(1);//Le reiniciamos el nivel a 1, para que pueda seguir jugando ahora desde el inicio
 		jugadorActual->setVidas(3);//Le reiniciamos sus vidas a 3, es justo porque ya ganó el juego
@@ -674,12 +683,14 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		clear_keybuf();//Borramos el buffer de entrada del teclado
 		clear(this->buffer);
 		do{
-			blit(vectorMotorJuego[0], buffer, 0, 0, 0, 0, 900, 660);
-			textprintf(buffer, font2, 480, 160, makecol(255, 0, 0), "%i", puntosScoreFinal);
-			textprintf(buffer, font2, 570, 235, makecol(255, 0, 0), "%i", l);
-			blit(buffer, screen, 0, 0, 0, 0, 960, 660);			
+			blit(this->vectorMotorJuego[0], this->buffer, 0, 0, 0, 0, 900, 660);
+			textprintf_ex(buffer, font2, 480, 160, makecol(255, 0, 0),-1, "%i",puntosScoreFinal);
+			textprintf_ex(buffer, font2, 570, 235, makecol(255, 0, 0),-1, "%i",l);
+			//textprintf(this->buffer, this->font2, 480, 160, makecol(255, 0, 0), "%i", puntosScoreFinal);
+			//textprintf(this->buffer, this->font2, 570, 235, makecol(255, 0, 0), "%i", l);
+			blit(this->buffer, screen, 0, 0, 0, 0, 960, 660);			
 		}while(!key[KEY_ESC]);
-		blit(buffer, screen, 0, 0, 0, 0, 960, 660);	
+		blit(this->buffer, screen, 0, 0, 0, 0, 960, 660);	
 		l=0;
 	}
 	else if(perdedor==true){//El usuario perdió el juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique

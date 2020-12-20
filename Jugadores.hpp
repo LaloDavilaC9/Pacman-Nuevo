@@ -39,6 +39,8 @@ class HistorialJugadores {
 public:
     HistorialJugadores() {};
     Jugadores *  registroEnArchivo();
+    Jugadores * iniciarSesion();
+    bool validarContrasena(Jugadores *);
     void modificarInformacion(Jugadores,int);
     void ganadores();
 };
@@ -113,21 +115,26 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 					}
 				}
 				else if(ASCII==27){//El usuario aprieta Escape, hay que retornar
+					jug->setID(-1);//Mandamos -1 para evitar que al dar escape, entre al motor del juego
 					return jug;
 				}
 			}
 			if(ASCII==13){//El usuario le dió ENTER
 				//Verificamos si ese nombre ya lo está usando algún otro usuario
 				if(jug->verificarRepeticionesUsuario())//Usuario repetido
-					textout(screen, font, "¡Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
+					textprintf_ex(screen, font, 335, 139, AZUL,-1, "¡Ups! Nombre ya existente, intente con uno diferente");
+					//textout(screen, font, "¡Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
 				else{
-					textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
+					textprintf_ex(screen, font, 335, 139, AZUL,-1, "                                                    ");
+					//textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
 					usuarioLibre=true;
 				}
 			}
 			auxNomb=p;
 			jug->setNombre(auxNomb);
-			textout(screen, font, p, 335, 99, AZUL);
+			//textprintf_ex(screen, font, 335, 99, AZUL,-1, "%s",p);
+			textout_ex(screen, font, p, 335, 99,AZUL, 0);
+			//textout(screen, font, p, 335, 99, AZUL);
 			memset(p,255,'\0');
 		} while(!usuarioLibre);//Sale cuando se le da un enter y el usuario es válido	
 		indice=0;
@@ -158,13 +165,16 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 						}
 					}
 					else if(ASCII==27){//Apretó Escape, hay que retornar
+						jug->setID(-1);//Mandamos -1 para evitar que al dar escape, entre al motor del juego
 						return jug;
 					}	
 				}
 			}
 			auxPass=p;
 			jug->setPassword(auxPass);
-			textout(screen, font, p, 335, 210, AZUL);
+			//textprintf_ex(screen, font, 335, 210, AZUL,-1, "%s",p);
+			textout_ex(screen, font, p, 335, 210,AZUL, 0);
+			//textout(screen, font, p, 335, 210, AZUL);
 			memset(p,255,'\0');
 		} 
 		while(salida2==false);
@@ -194,6 +204,155 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
     archivo.close();
 	return jug;	
 }
+
+Jugadores *HistorialJugadores::iniciarSesion(){
+	Jugador auxiliarArchivo;
+	char ASCII, p[255];
+	int newkey,indice=0;
+	bool salida=false,salida2=false,usuarioLibre=false,contrasenaCorrecta=false;
+	string auxNomb="", auxPass="";
+	BITMAP *registro=create_bitmap(900, 600),*continuar=create_bitmap(900, 600);
+	Jugadores *jug=new Jugadores ();
+	fstream archivo;
+	archivo.open("Elementos\\DatosJugadores.dat",ios::binary | ios::in | ios::out);//Abrimos el archivo existente
+	if(!archivo)
+		 archivo.open("Elementos\\DatosJugadores.dat",ios::binary|ios::out);//Lo crea
+	registro=load_bitmap("Elementos\\FotoRegistroInicio.bmp", NULL);
+	continuar=load_bitmap("Elementos\\FotoRegistro.bmp", NULL);
+
+	blit(registro, screen, 0, 0, 0, 0, 900, 600);
+	clear_keybuf();//Borramos el buffer de entrada del teclado
+	strcpy(p,"                       ");
+	while(!salida) {
+		do {
+			vline(screen, (indice*8)+335, 99, 107, AZUL);//Aparece el cursor para escribir
+			if(keypressed()) {//Detectamos si se pulsa una tecla
+				newkey = readkey();//Almacenamos el valor
+				ASCII = newkey & 0xff;//Convertimos lo almacenado
+				if(ASCII>=32 && ASCII <=126) {//Validamos el ingreso de solo caracteres permitidos
+					if(indice<20-1) {//Validamos que el usuario no ingrese más caracteres de los permitidos
+						p[indice]=ASCII;//Metemos el caracter ingresado al vector
+						indice++;
+						p[indice]='\0';//Asignamos el fin de línea
+					}
+					else
+						p[indice+1]=' ';
+				}
+				else if(ASCII==8){//Está retrocediendo
+					p[indice]=' ';//Se borra la posición actual
+					if(indice!=0){
+						indice--;//Cambiamos de índice
+						p[indice]=' ';//Se borra la posición actual
+					}
+				}
+				else if(ASCII==27){//El usuario aprieta Escape, hay que retornar
+					jug->setID(-1);//Mandamos -1 para evitar que al dar escape, entre al motor del juego
+					return jug;
+				}
+			}
+			if(ASCII==13){//El usuario le dió ENTER
+				//Verificamos si ese nombre ya lo está usando algún otro usuario
+				if(!jug->verificarRepeticionesUsuario())//Usuario Inexistente
+					textprintf_ex(screen, font, 335, 139, AZUL,-1, "¡Ups! nombre no existente, intente con uno válido");
+					//textout(screen, font, "¡Ups! nombre no existente, intente con uno válido", 335, 139, AZUL);
+				else{
+					textprintf_ex(screen, font, 335, 139, AZUL,-1,  "                                                    ");
+					//textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
+					usuarioLibre=true;
+				}
+			}
+			auxNomb=p;
+			jug->setNombre(auxNomb);
+			//textprintf_ex(screen, font, 335, 99, AZUL,-1, "%s",p);
+			textout_ex(screen, font, p, 335, 99,AZUL, 0);
+			//textout(screen, font, p, 335, 99, AZUL);
+			memset(p,255,'\0');
+		} while(!usuarioLibre);//Sale cuando se le da un enter y el usuario es válido	
+		indice=0;
+		clear_keybuf();
+		strcpy(p,"                       ");
+		do {
+			vline(screen, indice*8+335, 210, 218, AZUL);
+			if(keypressed()) {
+				 newkey = readkey();
+				 ASCII =newkey & 0xff;
+				 if(ASCII==13){
+				 	if(this->validarContrasena(jug)){//Contraseñacorrecta, puede salir
+				 		salida2=true;
+						contrasenaCorrecta=true;
+					}
+					else{
+						textprintf_ex(screen, font, 335, 245, AZUL,-1, "¡Ups! Clave incorrecta, intente de nuevo");
+						//textout(screen, font, "¡Ups! Clave incorrecta, intente de nuevo", 335, 245, AZUL);
+					}
+
+			 	 }
+				 else{
+				 	if(ASCII>=32 && ASCII <=126) {
+						if(indice<25) {
+							p[indice]=ASCII;
+							indice++;
+							p[indice]='\0';
+						}
+						else
+							p[indice+1]=' ';
+				 	}
+					 else if(ASCII==8){//Está retrocediendo
+						p[indice-1]=' ';//Se borra la posición actual
+						if(indice!=0){
+							indice--;//Cambiamos de índice
+						}
+					}
+					else if(ASCII==27){//Apretó Escape, hay que retornar
+						jug->setID(-1);//Mandamos -1 para evitar que al dar escape, entre al motor del juego
+						return jug;
+					}	
+				}
+			}
+			auxPass=p;
+			jug->setPassword(auxPass);
+			//textprintf_ex(screen, font, 335, 210, AZUL,-1, "%s",p);
+			textout_ex(screen, font, p, 335, 210,AZUL, 0);
+			//textout(screen, font, p, 335, 210, AZUL);
+			memset(p,255,'\0');
+		} 
+		while(salida2==false && !contrasenaCorrecta);
+		
+		//*pIdentificacion=usuario.id=secuenciaId(registroUsuarios);//Verifica cuál fue el último ID 
+		//*pVidas=3;//Inicializamos al usuario con 3 vidas
+
+		if(jug->getNom().size()!=0 && jug->getPass().size()!=0) {
+			salida=true;
+		}//Salimos del ciclo que controla la funciï¿½n
+	}
+    archivo.close();
+	return jug;	
+}
+
+bool HistorialJugadores::validarContrasena(Jugadores *jug){
+	fstream archivo;
+    Jugador aux;
+    archivo.open("Elementos\\DatosJugadores.dat", ios::binary | ios::in);
+	if(!archivo)//No existe un archivo, por lo tanto no hay una repetició
+		return false;
+    archivo.seekg(0, ios::beg);
+	while (!archivo.eof()) {
+        archivo.read((char*)&aux, sizeof(Jugador));
+        if (strcmp(aux.nombreU,jug->getNom().c_str())==0) {
+        	if(strcmp(aux.password,jug->getPass().c_str())==0){
+        			jug->setID(aux.id);
+        			jug->setPuntos(aux.puntos);
+        			jug->setNivel(aux.nivel);
+        			jug->setVidas(aux.vidas);
+					archivo.close();
+					return true;
+			}
+		}
+    }
+    archivo.close();
+    return false;
+}
+
 void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntosExtra) {
     Jugador nuevosDatos;
     fstream archivo;
@@ -263,23 +422,41 @@ void HistorialJugadores::ganadores() {
         }
         
         if(aux.size()==1){
-          	textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
-            textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
+        	textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
+          	//textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
+            //textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
             
 		}
         else if(aux.size()==2){
-            textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
-           	textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
-           	textprintf(buffer, font1, 308, 240, makecol(0, 255, 0), "%s", aux[1].nombreU);
-            textprintf(buffer, font1, 520, 240, makecol(0, 255, 0), "%i", aux[1].puntos);
+            //textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
+           	//textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
+           	textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
+        	
+        	textprintf_ex(buffer, font1, 308, 240, makecol(0, 255, 0),-1, "%s",aux[1].nombreU);
+        	textprintf_ex(buffer, font1, 520, 240, makecol(0, 255, 0),-1, "%i",aux[1].puntos);
+        	
+           	//textprintf(buffer, font1, 308, 240, makecol(0, 255, 0), "%s", aux[1].nombreU);
+            //textprintf(buffer, font1, 520, 240, makecol(0, 255, 0), "%i", aux[1].puntos);
 		}
 		else if(aux.size()>=3){
-			textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
-           	textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
-           	textprintf(buffer, font1, 308, 240, makecol(0, 255, 0), "%s", aux[1].nombreU);
-            textprintf(buffer, font1, 520, 240, makecol(0, 255, 0), "%i", aux[1].puntos);
-           	textprintf(buffer, font1, 308, 280, makecol(0, 0, 255), "%s", aux[2].nombreU);
-       	 	textprintf(buffer, font1, 520, 280, makecol(0, 0, 255), "%i", aux[2].puntos);
+			//textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
+           	//textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
+           	//textprintf(buffer, font1, 308, 240, makecol(0, 255, 0), "%s", aux[1].nombreU);
+            //textprintf(buffer, font1, 520, 240, makecol(0, 255, 0), "%i", aux[1].puntos);
+            
+            textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
+            
+            textprintf_ex(buffer, font1, 308, 240, makecol(0, 255, 0),-1, "%s",aux[1].nombreU);
+        	textprintf_ex(buffer, font1, 520, 240, makecol(0, 255, 0),-1, "%i",aux[1].puntos);
+        	
+        	textprintf_ex(buffer, font1, 308, 280, makecol(0, 0, 255),-1, "%s",aux[2].nombreU);
+        	textprintf_ex(buffer, font1, 520, 280, makecol(0, 0, 255),-1, "%i",aux[2].puntos);
+            
+           	//textprintf(buffer, font1, 308, 280, makecol(0, 0, 255), "%s", aux[2].nombreU);
+       	 	//textprintf(buffer, font1, 520, 280, makecol(0, 0, 255), "%i", aux[2].puntos);
 		}
     }
     destroy_bitmap(buffer);

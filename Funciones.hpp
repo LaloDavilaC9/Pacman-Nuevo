@@ -202,16 +202,13 @@ void menu(int Opcion) {
 					switch (OpcionJuego) {
 						case NuevoJuego:
 							jugador=registro.registroEnArchivo();//Un nuevo usuario fue registrado en el archivo
-							if(jugador->getNom().size()!=0){
+							if(jugador->getNom().size()!=0 && jugador->getId()!=-1)
 								mapa.motorJuego(jugador);
-								//cout<<"HOLA"<<endl;
-								//motorJuego(registroUsuario,pIdentificacion,pNivel,pVidas,vectorPintarMapa,vectorMotorJuego);	
-							}
 							break;
 						case ContinuarJuego:
-							//op=continuarProgreso(registroUsuario,pIdentificacion,pNivel,pVidas);
-							if(op!=1){
-								//motorJuego(registroUsuario,pIdentificacion,pNivel,pVidas,vectorPintarMapa,vectorMotorJuego);
+							jugador=registro.iniciarSesion();
+							if(jugador->getNom().size()!=0 && jugador->getId()!=-1){
+								mapa.motorJuego(jugador);
 							}
 							break;
 					}

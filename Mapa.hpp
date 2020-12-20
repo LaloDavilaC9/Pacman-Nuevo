@@ -471,7 +471,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				clyde.movimientoNormal(*this,vez,pacman);
 			}
 			if(!pacman.getMuerto()){
-				//blinky.movimientoNormal(*this,vez,pacman);
+				blinky.movimientoNormal(*this,vez,pacman);
 			}
 			if(!pacman.getMuerto()){
 				pinky.movimientoNormal(*this,vez,pacman);

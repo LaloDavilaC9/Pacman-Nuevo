@@ -284,11 +284,17 @@ public:
 					else if(pacman.getI() < this->posI)//Pacman está arriba
 						this->direccion=1;
 				}
-			
+				if(!this->movimientoValido(mapa)){
+					this->direccion=0;
+					do{
+						this->direccion++;
+					}while(!this->movimientoValido(mapa));
+					this->direccion;
+				}
+				cout<<"Direccion es "<<direccion<<endl;
 				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
 					switch(this->direccion){
 	    				case 1://Arriba
-	    				
 	    					mapa.setDirecciones(3,4);//Apunta hacia arriba en el mapa
 							this->posI-=1;
 							break;
@@ -299,7 +305,6 @@ public:
 						case 3://Izquierda
 							mapa.setDirecciones(3,1);//Apunta hacia arriba en el mapa
 							this->posJ-=1;
-							
 							break;
 						case 4://Derecha
 							mapa.setDirecciones(3,2);//Apunta hacia arriba en el mapa
@@ -330,7 +335,7 @@ public:
 						mapa.setMatrizJuego(this->posI,this->posJ,9);
 						mapa.setMatrizJuego(auxI,auxJ,valorPre);
 					}		
-				} 		
+				}	
 			}
 		}
 	

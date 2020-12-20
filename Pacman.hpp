@@ -5,10 +5,10 @@
 class Mapa;
 class Pacman {
 	private:
-		int posI, posJ, direccion,contPoder,mato;
+		int posI, posJ, direccion,contPoder,mato,duracionPoder;
 		bool poder,muerto,comibles[4];
 	public:
-		Pacman();
+		Pacman(int nivel);
 		void movimiento(Mapa &mapa,Jugadores &);
 		bool movimientoValido(Mapa &mapa);
 		void tienePoder(Mapa &mapa);
@@ -36,7 +36,7 @@ class Pacman {
 		}
 };
 
-Pacman::Pacman() {
+Pacman::Pacman(int nivel) {
 	this->posI = 14;
 	this->posJ = 14;
 	this->direccion = 0;
@@ -46,30 +46,25 @@ Pacman::Pacman() {
 	this->mato=0;
 	for(int i=0;i<4;i++)
 		this->comibles[i]=false;
+	this->duracionPoder=50-(nivel*5);
 }
 
 #include "Mapa.hpp"
 
 void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
+	SAMPLE *sonido=load_sample("Elementos\\pacman avanza chido.wav");
+
 	int auxI,auxJ,x,buscar;
 	if(key[KEY_UP] || key[KEY_W]) {
-		//*pDir=4;//Dirección de la imagen de Pacman -> ¿A dónde apunta Pacman?
 		mapa.setDirecciones(0,4);
-		//this->posX--;
 		this->direccion=1;
-		//PosI--;//Al moverse hacia arriba las filas disminuyen. A partir de este dato, checamos todas las validaciones
-		//x=verificarTeleport(matrizJuego, PosI, PosJ, 0,0);//Checamos si el Pacman se moverá o no al teleport
 		x=movimientoValido(mapa);
 		if(x) {//Se puede mover a donde desea el jugador
-			//if(matrizJuego[PosI][PosJ]==1 || matrizJuego[PosI][PosJ]==3){}//Quiere decir que el PASO NO es libre	
-			//else {//Pacman si se puede mover, por lo tanto hay que validar que su muerte se de
-				//puntaje(matrizJuego,PosI,PosJ,pcomida,puntuacionTotal,pCambioNivel,registroUsuarios,pIdentificacion,pFrutas,pVidas,dificultad);//Checamos y acutalizamos puntaje en pantalla
 				this->puntaje(mapa);
 				this->tienePoder(mapa);
-				//queCome(matrizJuego,pcomida,PosI,PosJ,dificultad);//Ya sabemos si el puntero de la comida está o no activo
 				if(/*morirPacman(matrizJuego,PosI,PosJ,pvez,pcomida,pQuien)==0*/!morirPacman(mapa)){//Pacman no morirá en este movimiento
 					if(mapa.getSonido()==0){//Quiere decir que el usuario está permitiendo el sonido del movimiento del pacman
-						//play_sample(sonido,200,150,1000,0);
+						play_sample(sonido,200,150,1000,0);
 					}
 					mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->PosI][this->PosJ]=2;//Borramos la posición anterior, el pacman ya comió	por eso dejamos un 2		  
 		           	mapa.setMatrizJuego(this->posI-1,this->posJ,0);//[this->PosI-1][this->PosJ]=0; //Se hace el movimiento del pacman, cambiándolo de posición
@@ -132,7 +127,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				this->tienePoder(mapa);
 				if(!morirPacman(mapa)){//Pacman no morirá en este movimiento
 					if(mapa.getSonido()==0){//Quiere decir que el usuario está permitiendo el sonido del movimiento del pacman
-						//play_sample(sonido,200,150,1000,0);
+						play_sample(sonido,200,150,1000,0);
 					}
 					mapa.setMatrizJuego(this->posI,this->posJ,2);//[this->posI][this->posJ]=2;//Borramos la posición anterior, el pacman ya comió	por eso dejamos un 2		  
 		            mapa.setMatrizJuego(this->posI,this->posJ-1,0);//[this->posI][this->posJ-1]=0; //Se hace el movimiento del pacman, cambiándolo de posición
@@ -190,7 +185,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				this->tienePoder(mapa);
 				if(!morirPacman(mapa)){//Pacman no morirá en este movimiento
 					if(mapa.getSonido()==0){//Quiere decir que el usuario está permitiendo el sonido del movimiento del pacman
-						//play_sample(sonido,200,150,1000,0);
+						play_sample(sonido,200,150,1000,0);
 					}
 					mapa.setMatrizJuego(this->posI,this->posJ,2);//Borramos la posición anterior, el pacman ya comió	por eso dejamos un 2		  
 		            mapa.setMatrizJuego(this->posI,this->posJ+1,0);//Se hace el movimiento del pacman, cambiándolo de posición
@@ -247,7 +242,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				this->tienePoder(mapa);
 				if(!morirPacman(mapa)){//Pacman no morirá en este movimiento
 					if(mapa.getSonido()==0){//Quiere decir que el usuario está permitiendo el sonido del movimiento del pacman
-						//play_sample(sonido,200,150,1000,0);
+						play_sample(sonido,200,150,1000,0);
 					}
 					mapa.setMatrizJuego(this->posI,this->posJ,2);//Borramos la posición anterior, el pacman ya comió	por eso dejamos un 2		  
 		            mapa.setMatrizJuego(this->posI+1,this->posJ,0);//Se hace el movimiento del pacman, cambiándolo de posición
@@ -340,8 +335,8 @@ void Pacman::tienePoder(Mapa &mapa) {
 	int auxI,auxJ;
 	auxI=this->posI;
 	auxJ=this->posJ;
-	if(this->poder)//Tiene poder, debemos incrementarle al contador
-		this->contPoder++;
+	if(this->poder)//Tiene poder, debemos decrementarle al contador
+		this->contPoder--;
 	switch(direccion){
 		case 1://Arriba
 			auxI=this->posI-1;
@@ -357,7 +352,7 @@ void Pacman::tienePoder(Mapa &mapa) {
 			break;
 	}
 	if(mapa.getMatrizJuego(auxI,auxJ)==6){
-		this->contPoder=0;
+		this->contPoder=this->duracionPoder;
 		this->poder=true;
 		for(int i=0;i<4;i++)
 			this->comibles[i]=true;
@@ -366,7 +361,7 @@ void Pacman::tienePoder(Mapa &mapa) {
 		mapa.setPausaF(2,0);
 		mapa.setPausaF(3,0);
 	}
-	if(this->contPoder==100){//Se acabó el poder
+	if(this->contPoder==0){//Se acabó el poder
 		mapa.setPausaF(0,0);
 		mapa.setPausaF(1,0);
 		mapa.setPausaF(2,0);
@@ -374,7 +369,7 @@ void Pacman::tienePoder(Mapa &mapa) {
 		for(int i=0;i<4;i++)
 			this->comibles[i]=false;
 		this->poder=false;
-		this->contPoder=0;
+		this->contPoder=this->duracionPoder;
 	}
 		
 		

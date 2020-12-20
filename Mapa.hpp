@@ -3,7 +3,7 @@
 #define MAPA_H_INCLUDED
 
 #define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
-#define VELOCIDAD 200 //Importante no usar valores negativos
+#define VELOCIDAD 300 //Importante no usar valores negativos
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
 
@@ -43,7 +43,6 @@ class Mapa {
 		int getSonido(){return this->sonido;}
 		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky,Pinky &,Inky &);
 };
-
 Mapa::Mapa() {
 	int i,j;
 	for (i = 0; i < 20; i++) {
@@ -219,17 +218,29 @@ void Mapa::mapa_3() {
 void Mapa::seleccionarMapa(int nivel) {
 	switch (nivel) {
 		case 1:
-		case 2:
-		case 3:
 			mapa_1();
 			break;
-		case 4:
-		case 5:
-		case 6:
+		case 2:
 			mapa_2();
 			break;
+		case 3:
+			mapa_3();
+			break;
+		case 4:
+			mapa_1();
+			break;
+		case 5:
+			mapa_2();
+			break;
+		case 6:
+			mapa_3();
+			break;
 		case 7:
+			mapa_1();
+			break;
 		case 8:
+			mapa_2();
+			break;
 		case 9:
 			mapa_3();
 			break;
@@ -420,8 +431,13 @@ void Mapa::ponerFruta() {
 #include "Pacman.hpp"
 #include "Fantasmas.hpp"
 void Mapa::motorJuego(Jugadores *jugadorActual){
-	//Creamos a Pacman
-	Pacman pacman;
+	play_midi(NULL,NULL);//Frenamos la música del inicio
+	SAMPLE *efecto=load_wav("Elementos\\pacman-song.wav");//Tono de inicio de nivel
+	SAMPLE *muertePacman=load_sample("Elementos\\pacman-dies.wav");
+	MIDI *perderMusic =load_midi("Elementos\\Rosas.mid");
+	MIDI *ganarMusic =load_midi("Elementos\\sam dave - soul man.mid");	
+		
+	Pacman pacman(jugadorActual->getNivel());//Creamos a Pacman
 	Clyde clyde(10,10,14);
 	Blinky blinky(7,10,15);
 	Pinky pinky(9,9,14);
@@ -431,9 +447,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	char ASCII,ASCII2;
 	bool x=false,perdedor=false,ganador=false;
 	do{//Incia el Nivel
-		//play_sample(efecto,200,150,1000,0);//Efecto de sonido de inicio
+		play_sample(efecto,200,150,1000,0);//Efecto de sonido de inicio
+		this->dificultad=50-(jugadorActual->getNivel()*5);
 		this->seleccionarMapa(jugadorActual->getNivel());//Generamos el mapa con el nivel actual
-		//cout<<"El jugador que se registra es "<<jugadorActual->getNom()<<" y size de "<<jugadorActual->getNom().size()<<endl;
 		this->dibujarMapa(jugadorActual->getNivel(),pacman.getPoder());//Cargamos todo al mapa
 		blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente
 		textprintf(buffer, font1, 400, 0, makecol(255, 255, 255), "Listo? ");//Texto de ¿listo? para antes de comenzar
@@ -485,14 +501,13 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				inky.movimientoNormal(*this,vez,pacman);
 			}
 			if(pacman.getMuerto()){
+				play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
 				this->reiniciarFantasmas(clyde, pacman, blinky,pinky,inky);
 				vez=0;
 				pacman.setMuerto(false);
 				jugadorActual->setVidas(jugadorActual->getVidas()-1);
 				auxiliarArchivo.modificarInformacion(*jugadorActual,0);// Esta validación impide al usuario hacer trampas de salirse a la mitad de un nivel para poder reiniciar sus vidas y le impide incrementar de forma tramposa su puntaje
 			}
-			//movimientoPacman(matrizJuego,vecPos,pvez,pcomida,pVidas,puntuacionTotal,pCambioNivel,pDir,registroUsuarios,pIdentificacion,pFrutas,pQuien,pPausaF,dificultad,sonidoActivo);//Le permitimos al Pacman moverse
-			//fantasmas(matrizJuego,vez,vecPos,pvez,pcomida,pVidas,pDirF1,pDirF2,pDirF3,pDirF4,pPausaF,dificultad);//Llama a los 4 fantasmas, según corresponda por el valor del "pvez#"
 			if(vez%4==0){//Este if controla la animación del Pacman comiendo
 				this->direccionesVisuales[0]=5;
 			}
@@ -582,7 +597,6 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				}
 				//Si no la encuentra quiere decir que el Pacman se la comió
 			}
-			//pintarMapa(matrizJuego,buffer,pDir,pcomida,pDirF1,pDirF2,pDirF3,pDirF4,pFrutas,*pNivel,pPausaF,dificultad,vectorPintarMapa);//Cargamos todo lo visual al mapa
 			this->dibujarMapa(jugadorActual->getNivel(),pacman.getPoder());
 			blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente
 			textprintf(screen, font1, 0, 0, makecol(255, 153, 51), "Score: %i", this->puntuacionTotal);//Es el encargado de mostrar el Score
@@ -593,7 +607,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			vez++;
 			rest(VELOCIDAD);//Maneja la velocidad del juego. Entre más alto el parámetro, más lento el juego
 			if(jugadorActual->getVidas()<=0){//se terminó el juego
-				//play_midi(perderMusic,1);//Se activa la música de derrota
+				play_midi(perderMusic,1);//Se activa la música de derrota
 				perdedor=true;//Permitimos la salida de este ciclo y del siguiente
 			}
 			if(this->cambioNivel){//Habrá cambio de nivel, hay que guardar
@@ -601,10 +615,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				jugadorActual->setPuntos(jugadorActual->getPuntos()+puntosScoreFinal);
 				jugadorActual->setNivel(jugadorActual->getNivel()+1);
 				auxiliarArchivo.modificarInformacion(*jugadorActual,0);
-				cout<<"Se supone que se guarda la info"<<endl;
+				//cout<<"Se supone que se guarda la info"<<endl;
 			}
-		
-		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa
+		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa, al salir significa que o perdió o hay un cambio de nivel
 		//*pcomida=0;//Reiniciamos el contador de comida por si estuviera prendido, que no avance con poder al siguiente nivel
 		pacman.setPoder(false);
 		vezFruta=0;//Reiniciamos este contador para que podamos volver a imprimir la fruta en el siguiente.
@@ -612,8 +625,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		this->cambioNivel=false;
 		//*puntuacionTotal=0;//Reseteamos la puntuación
 		this->puntuacionTotal=0;
+		this->reiniciarFantasmas(clyde, pacman, blinky,pinky,inky);
 		//*pNivel+=1;//Aumentamos el nivel en 1
-			cout<<"Llega"<<endl;
+		//cout<<"Llega"<<endl;
 		if(perdedor){//Reiniciamos el nivel del usuario a 1 y le borramos su puntaje
 			jugadorActual->setNivel(1);
 			jugadorActual->setVidas(3);
@@ -622,7 +636,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		}
 		else if(jugadorActual->getNivel()==NIVELMAXIMO){//El usuario ganó el juego
 			set_volume(70,70);
-			//play_midi(ganarMusic,1);//Inicia la música de ganador
+			play_midi(ganarMusic,1);//Inicia la música de ganador
 			ganador=true;//Permitimos la salida de este ciclo
 		}
 		else

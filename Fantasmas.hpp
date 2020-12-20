@@ -160,7 +160,10 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
 					else{//Se encontró cualquier otra cosa
 						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
 						mapa.setMatrizJuego(this->posI,this->posJ,10);
-						mapa.setMatrizJuego(auxI,auxJ,valorPre);
+						if(valorPre!=7 && valorPre!=8 && valorPre!=9 && valorPre!=10)
+							mapa.setMatrizJuego(auxI,auxJ,valorPre);
+						else
+							mapa.setMatrizJuego(auxI,auxJ,2);
 					}		
 				}
 			}
@@ -176,12 +179,12 @@ public:
     void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman) {
     	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
     	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
-    		if(vez==41){//Lo sacamos de su casa por primera vez
+    		if(vez==21){//Lo sacamos de su casa por primera vez
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(10,15,2);
 			}
     			
-    		else if(vez>41){//Comienza su movimiento normal
+    		else if(vez>21 &&vez%2==0){//Comienza su movimiento normal
     			if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
     				distancias[0]=distancia(posI-1, posJ, pacman.getI(), pacman.getJ());//Arriba
     			else 
@@ -242,7 +245,10 @@ public:
 					else{//Se encontró cualquier otra cosa
 						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
 						mapa.setMatrizJuego(this->posI,this->posJ,7);
-						mapa.setMatrizJuego(auxI,auxJ,valorPre);
+						if(valorPre!=7 && valorPre!=8 && valorPre!=9 && valorPre!=10)
+							mapa.setMatrizJuego(auxI,auxJ,valorPre);
+						else
+							mapa.setMatrizJuego(auxI,auxJ,2);
 					}		
 				} 		
 			}
@@ -256,12 +262,12 @@ public:
     void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman) {
     	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
     	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
-    		if(vez==25){//Lo sacamos de su casa por primera vez
+    		if(vez==41){//Lo sacamos de su casa por primera vez
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(9,14,2);
 			}
     			
-    		else if(vez>25){//Comienza su movimiento normal
+    		else if(vez>41 && vez%3==0){//Comienza su movimiento normal
     			if(pacman.getI()==this->posI){//Están en la misma fila
 					if(pacman.getJ() > this->posJ)//Quiere decir que el pacman  está a la derecha
 						this->direccion=4;
@@ -289,9 +295,8 @@ public:
 					do{
 						this->direccion++;
 					}while(!this->movimientoValido(mapa));
-					this->direccion;
 				}
-				cout<<"Direccion es "<<direccion<<endl;
+				//cout<<"Direccion es "<<direccion<<endl;
 				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
 					switch(this->direccion){
 	    				case 1://Arriba
@@ -320,7 +325,7 @@ public:
 							mapa.setMatrizJuego(9,14,9);
 							this->sacarFantasmas(mapa);
 							pacman.setComibles(0,false);
-							mapa.setPausaF(2,1);//Está normal el Fantasma, ya no está asustado
+							mapa.setPausaF(3,1);//Está normal el Fantasma, ya no está asustado
 						}
 						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
 							this->posI=auxI;
@@ -333,12 +338,95 @@ public:
 					else{//Se encontró cualquier otra cosa
 						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
 						mapa.setMatrizJuego(this->posI,this->posJ,9);
-						mapa.setMatrizJuego(auxI,auxJ,valorPre);
-					}		
+						if(valorPre!=7 && valorPre!=8 && valorPre!=9 && valorPre!=10)
+							mapa.setMatrizJuego(auxI,auxJ,valorPre);
+						else
+							mapa.setMatrizJuego(auxI,auxJ,2);
+					}			
 				}	
 			}
 		}
 	
+};
+class Inky : public Fantasmas{//ID = 8
+public:
+	Inky(int id, int i, int j) : Fantasmas(id,i,j){}
+    void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman) {
+    	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
+    	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
+    		if(vez==59){//Lo sacamos de su casa por primera vez
+    			this->sacarFantasmas(mapa);
+    			mapa.setMatrizJuego(9,15,2);
+			}
+    			
+    		else if(vez>59 && vez%4==0){//Comienza su movimiento normal
+    			if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
+    				distancias[0]=distancia(posI-1, posJ, pacman.getI(), pacman.getJ());//Arriba
+    			else 
+    				distancias[0]=9999;
+    			if(mapa.getMatrizJuego(posI+1, posJ)!=1) 
+    				distancias[1]=distancia(posI+1, posJ, pacman.getI(), pacman.getJ());//Abajo
+    			else 
+    				distancias[1]=9999;
+    			if(mapa.getMatrizJuego(posI, posJ-1)!=1) 
+    				distancias[2]=distancia(posI, posJ-1, pacman.getI(), pacman.getJ());//Izquierda
+    			else 
+    				distancias[2]=9999;
+    			if(mapa.getMatrizJuego(posI, posJ+1)!=1) 
+    				distancias[3]=distancia(posI, posJ+1, pacman.getI(), pacman.getJ());//Derecha
+    			else 
+    				distancias[3]=9999;
+    			direccion=distanciaMenor(distancias);
+				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
+					switch(this->direccion){
+	    				case 1://Arriba
+	    					mapa.setDirecciones(2,4);//Apunta hacia arriba en el mapa
+							this->posI-=1;
+							break;
+						case 2://Abajo
+							mapa.setDirecciones(2,3);//Apunta hacia arriba en el mapa
+							this->posI+=1;
+							break;
+						case 3://Izquierda
+							mapa.setDirecciones(2,1);//Apunta hacia arriba en el mapa
+							this->posJ-=1;
+							
+							break;
+						case 4://Derecha
+							mapa.setDirecciones(2,2);//Apunta hacia arriba en el mapa
+							this->posJ+=1;
+							break;
+					}
+					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
+						if(pacman.getPoder() && pacman.getComible(0)){//Se muere el fantasma
+							this->comibles=false;
+							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
+							this->posI=9;
+							this->posJ=15;//Regresamos el fantasma a su casa
+							mapa.setMatrizJuego(9,15,8);
+							this->sacarFantasmas(mapa);
+							pacman.setComibles(1,false);
+							mapa.setPausaF(1,1);//Está normal el Fantasma, ya no está asustado
+						}
+						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
+							this->posI=auxI;
+							this->posJ=auxJ;
+							pacman.setMuerto(true);	
+							pacman.setPoder(false);
+						}
+						
+					}
+					else{//Se encontró cualquier otra cosa
+						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
+						mapa.setMatrizJuego(this->posI,this->posJ,8);
+						if(valorPre!=7 && valorPre!=8 && valorPre!=9 && valorPre!=10)
+							mapa.setMatrizJuego(auxI,auxJ,valorPre);
+						else
+							mapa.setMatrizJuego(auxI,auxJ,2);
+					}		
+				} 		
+			}
+		}
 };
 
 

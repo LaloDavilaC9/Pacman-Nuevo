@@ -11,6 +11,7 @@ class Pacman;
 class Clyde;
 class Blinky;
 class Pinky;
+class Inky;
 
 class Mapa {
 	private:
@@ -40,7 +41,7 @@ class Mapa {
 		void setMatrizJuego(int i, int j, int valor){this->matrizJuego[i][j]=valor;}
 		int getMatrizJuego(int i, int j){return this->matrizJuego[i][j];}
 		int getSonido(){return this->sonido;}
-		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky,Pinky &);
+		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky,Pinky &,Inky &);
 };
 
 Mapa::Mapa() {
@@ -424,6 +425,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	Clyde clyde(10,10,14);
 	Blinky blinky(7,10,15);
 	Pinky pinky(9,9,14);
+	Inky inky(8,9,15);
 	HistorialJugadores auxiliarArchivo;
 	int l=0,l1=0,l2=0,vez=0,vezFruta=0,vezCargar=0,puntosScoreFinal,newkey,newkey2;
 	char ASCII,ASCII2;
@@ -451,7 +453,10 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 					
 				}
 				else if(pacman.getMato()==2){//Mató al fantasma 8
-	
+					inky.posI=10;
+					inky.posJ=15;
+					this->matrizJuego[9][15]=8;
+					inky.sacarFantasmas(*this);
 				}
 				else if(pacman.getMato()==3){//Mató al fantasma 9
 					pinky.posI=9;
@@ -476,9 +481,11 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			if(!pacman.getMuerto()){
 				pinky.movimientoNormal(*this,vez,pacman);
 			}
+			if(!pacman.getMuerto()){
+				inky.movimientoNormal(*this,vez,pacman);
+			}
 			if(pacman.getMuerto()){
-				this->reiniciarFantasmas(clyde, pacman, blinky,pinky);
-	
+				this->reiniciarFantasmas(clyde, pacman, blinky,pinky,inky);
 				vez=0;
 				pacman.setMuerto(false);
 				jugadorActual->setVidas(jugadorActual->getVidas()-1);
@@ -675,10 +682,11 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	//}while(true);
 }
 
-void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky,Pinky &pinky){
+void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky,Pinky &pinky,Inky &inky){
 	this->matrizJuego[clyde.getI()][clyde.getJ()]=2;
 	clyde.setPos(10,14);
 	this->matrizJuego[10][14]=10;
+	
 	this->matrizJuego[pacman.getI()][pacman.getJ()]=2;
 	pacman.setPos(14,14);
 	this->matrizJuego[14][14]=0;
@@ -690,5 +698,9 @@ void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky,Pinky
 	this->matrizJuego[pinky.getI()][pinky.getJ()]=2;
 	pinky.setPos(9,14);
 	this->matrizJuego[9][14]=9;
+	
+	this->matrizJuego[inky.getI()][inky.getJ()]=2;
+	inky.setPos(9,15);
+	this->matrizJuego[9][15]=8;
 }
 #endif

@@ -4,7 +4,7 @@
 #include <vector>
 #include <allegro.h>
 #include <algorithm>
-#define AZUL makecol(51, 153, 255)//Color predefinido
+#define AZUL makecol(250, 196, 30)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
 using namespace std;
 struct Jugador{
@@ -117,9 +117,9 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 			if(ASCII==13){//El usuario le dió ENTER
 				//Verificamos si ese nombre ya lo está usando algún otro usuario
 				if(jug->verificarRepeticionesUsuario())//Usuario repetido
-					textprintf_ex(screen, font, 335, 139, AZUL,-1, "¡Ups! Nombre ya existente, intente con uno diferente");
+					textprintf_ex(screen, font, 335, 139, AZUL,0, "¡Ups! Nombre ya existente, intente con uno diferente");
 				else{
-					textprintf_ex(screen, font, 335, 139, AZUL,-1, "                                                    ");
+					textprintf_ex(screen, font, 335, 139, AZUL,0, "                                                    ");
 					usuarioLibre=true;
 				}
 			}

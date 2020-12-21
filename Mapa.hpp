@@ -4,7 +4,7 @@
 
 #define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
-#define AZUL makecol(51, 153, 255)//Color predefinido
+//#define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
 
 class Pacman;

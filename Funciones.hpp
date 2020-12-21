@@ -2,7 +2,7 @@
 #include <allegro.h>
 #include "Mapa.hpp"
 //#define AZUL makecol(51, 153, 255)//Color predefinido
-#define NEGRO makecol(0, 0, 0)//Color predefido
+
 using namespace std;
 struct Guardado{//Esta estructura es la encargada de manejar los puntos, el nivel y las vidas de los usuarios para guardarlos en un archivo binario.
 	int puntos=0;

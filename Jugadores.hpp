@@ -6,6 +6,7 @@
 #include <algorithm>
 #define AZUL makecol(250, 196, 30)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
+
 using namespace std;
 struct Jugador{
 	unsigned int vidas, puntos, id,nivel;
@@ -299,10 +300,7 @@ Jugadores *HistorialJugadores::iniciarSesion(){
 			memset(p,255,'\0');
 		} 
 		while(salida2==false && !contrasenaCorrecta);
-		
-		//*pIdentificacion=usuario.id=secuenciaId(registroUsuarios);//Verifica cuál fue el último ID 
-		//*pVidas=3;//Inicializamos al usuario con 3 vidas
-
+		jug->setPuntos(0);
 		if(jug->getNom().size()!=0 && jug->getPass().size()!=0) {
 			salida=true;
 		}//Salimos del ciclo que controla la funciï¿½n
@@ -347,7 +345,8 @@ void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntos
     for(int i=0;i<tamano;i++){
        	archivo.read(reinterpret_cast<char*>(&nuevosDatos), sizeof(Jugador));
       	if(jugadorCambio.getId()==nuevosDatos.id){
-            nuevosDatos.puntos=jugadorCambio.getPuntos()+puntosExtra;
+      		cout<<"Nuevos datos trae "<<nuevosDatos.puntos<<" + "<<jugadorCambio.getPuntos()<<" + "<<puntosExtra<<endl;
+            nuevosDatos.puntos+=jugadorCambio.getPuntos()+puntosExtra;
             nuevosDatos.vidas=jugadorCambio.getVidas();
             nuevosDatos.nivel=jugadorCambio.getNivel();
             nuevosDatos.id=jugadorCambio.getId();

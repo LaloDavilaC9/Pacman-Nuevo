@@ -527,10 +527,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 							newkey2=readkey();
 							ASCII2 = newkey2 & 0xff;
 							if(ASCII2==13){//Apretó enter,se retorna porque el usuario ya no quiso seguir jugando a pesar de la advertencia
+								jugadorActual->setPuntos(0);
 								auxiliarArchivo.modificarInformacion(*jugadorActual,0);// Esta validación impide al usuario hacer trampas de salirse a la mitad de un nivel para poder reiniciar sus vidas y le impide incrementar de forma tramposa su puntaje
 								clear(this->buffer);
-								vezFruta=0;
-								frutas=0;
 								return;
 							}
 							else if(ASCII2==27){//apretó Escape, se cancela la operación
@@ -621,7 +620,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				puntosScoreFinal=this->puntuacionTotal;//Por fines prácticos, hacemos un respaldo de la puntuación total del nivel	
 				jugadorActual->setPuntos(jugadorActual->getPuntos()+puntosScoreFinal);//Le cambiamos los puntos al jugador
 				jugadorActual->setNivel(jugadorActual->getNivel()+1);//Cambiamos el nivel
-				auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Guardamos
+				//auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Guardamos
 			}
 		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa, al salir significa que o perdió o hay un cambio de nivel
 		pacman.setPoder(false);//Borramos el poder por en caso de que al salir del nivel anterior lo tuviera
@@ -634,17 +633,17 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			jugadorActual->setNivel(1);
 			jugadorActual->setVidas(3);
 			jugadorActual->setPuntos(0);
-			auxiliarArchivo.modificarInformacion(*jugadorActual,0);
-			frutas=0;
-			vezFruta=0;
+			//auxiliarArchivo.modificarInformacion(*jugadorActual,0);
 		}
 		else if(jugadorActual->getNivel()==NIVELMAXIMO){//El usuario ganó el juego
 			set_volume(70,70);
 			play_midi(ganarMusic,1);//Inicia la música de ganador
 			ganador=true;//Permitimos la salida de este ciclo
 		}
-		else
+		else{
 			auxiliarArchivo.modificarInformacion(*jugadorActual,0);//guardarNivel(registroUsuarios,pNivel,pIdentificacion,false);//Quiere decir que es cambio de nivel, y hay que guardar
+			jugadorActual->setPuntos(0);
+		}
 		clear(this->buffer);
 		do{//Este switch es el encargado de la animación de guardado
 			switch(vezCargar){
@@ -669,12 +668,12 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		vez=0;
 		clear(buffer);	
 	} while(!perdedor && !ganador);//Ganador se activa cuando se termina el nivel 9
+	
 	if(ganador){//El usuario ganó el Juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
 		this->vectorMotorJuego[0]=load_bitmap("Elementos\\Felicidades.bmp", NULL);
 		l=jugadorActual->getVidas();
 		jugadorActual->setNivel(1);//Le reiniciamos el nivel a 1, para que pueda seguir jugando ahora desde el inicio
 		jugadorActual->setVidas(3);//Le reiniciamos sus vidas a 3, es justo porque ya ganó el juego
-		auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Se guarda por última vez la información del usuario	
 		clear_keybuf();//Borramos el buffer de entrada del teclado
 		clear(this->buffer);
 		//Mostramos la pantalla final con las estadísticas finales
@@ -695,6 +694,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 					blit(buffer, screen, 0, 0, 0, 0, 960, 660);
 				}while(!key[KEY_ESC]);
 	}
+	auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Se guarda por última vez la información del usuario	
 	set_volume(45, 45);//Reducimos el nivel de volumen al original
 	clear_keybuf();//Borramos el buffer*/
 	clear(this->buffer);

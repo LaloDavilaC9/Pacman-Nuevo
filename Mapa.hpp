@@ -529,6 +529,8 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 							if(ASCII2==13){//Apretó enter,se retorna porque el usuario ya no quiso seguir jugando a pesar de la advertencia
 								auxiliarArchivo.modificarInformacion(*jugadorActual,0);// Esta validación impide al usuario hacer trampas de salirse a la mitad de un nivel para poder reiniciar sus vidas y le impide incrementar de forma tramposa su puntaje
 								clear(this->buffer);
+								vezFruta=0;
+								frutas=0;
 								return;
 							}
 							else if(ASCII2==27){//apretó Escape, se cancela la operación
@@ -633,6 +635,8 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			jugadorActual->setVidas(3);
 			jugadorActual->setPuntos(0);
 			auxiliarArchivo.modificarInformacion(*jugadorActual,0);
+			frutas=0;
+			vezFruta=0;
 		}
 		else if(jugadorActual->getNivel()==NIVELMAXIMO){//El usuario ganó el juego
 			set_volume(70,70);

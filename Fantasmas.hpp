@@ -19,11 +19,6 @@ public:
         this->muerteFantasma=load_sample("Elementos\\pacman-eating-ghost");
     }
     virtual void movimientoNormal(Mapa &, int,Pacman &) = 0;
-    //virtual void movimientoPersecucion() = 0;
-    //virtual void movimientoHuida() = 0;
-    //int* posiciones();
-    //bool matarPacman(int*, bool);
-    //void regeneracion();
    	bool movimientoValido(Mapa &mapa);
     void sacarFantasmas(Mapa &);
     void setPos(int i, int j){
@@ -62,6 +57,28 @@ public:
 			
 		}
 		return indi;
+	}
+	
+	void asignarDireccion(Mapa &mapa){
+		int auxDir=this->id-6;
+		switch(this->direccion){
+	    	case 1://Arriba
+	    		mapa.setDirecciones(auxDir,4);//Apunta hacia arriba en el mapa
+				this->posI-=1;
+				break;
+			case 2://Abajo
+				mapa.setDirecciones(auxDir,3);//Apunta hacia arriba en el mapa
+				this->posI+=1;
+				break;
+			case 3://Izquierda
+				mapa.setDirecciones(auxDir,1);//Apunta hacia arriba en el mapa
+				this->posJ-=1;				
+				break;
+			case 4://Derecha
+				mapa.setDirecciones(auxDir,2);//Apunta hacia arriba en el mapa
+				this->posJ+=1;
+				break;
+		}
 	}
 };
 #include "Mapa.hpp"
@@ -114,29 +131,11 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(10,14,2);
 			}
-    		else if(vez>6){//Comienza su movimiento normal
+    		else if(vez>6 && vez%2==0){//Comienza su movimiento normal
     			srand(time(NULL));
 				this->direccion=rand()%4+1;//Generamos random un número para que se mueva 1=Derecha 2=Izquierda 3=Arriba 4=Abajo
 				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
-					switch(this->direccion){
-	    				case 1://Arriba
-	    					mapa.setDirecciones(4,4);//Apunta hacia arriba en el mapa
-							this->posI-=1;
-							break;
-						case 2://Abajo
-							mapa.setDirecciones(4,3);//Apunta hacia arriba en el mapa
-							this->posI+=1;
-							break;
-						case 3://Izquierda
-							mapa.setDirecciones(4,1);//Apunta hacia arriba en el mapa
-							this->posJ-=1;
-							
-							break;
-						case 4://Derecha
-							mapa.setDirecciones(4,2);//Apunta hacia arriba en el mapa
-							this->posJ+=1;
-							break;
-					}
+					this->asignarDireccion(mapa);
 					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
 						if(pacman.getPoder() && pacman.getComible(3)){//Se muere el fantasma
 							this->comibles=false;
@@ -175,84 +174,64 @@ public:
     	int auxI=this->posI,auxJ=this->posJ,valorPre=2;
     	int auxPacmanI=0,auxPacmanJ=0;
     	int distancias[4]; //Guarda las distancias en los diferentes movimientos posibles
-    		if(vez==21){//Lo sacamos de su casa por primera vez
-    			this->sacarFantasmas(mapa);
-    			mapa.setMatrizJuego(10,15,2);
-			}
-    		else if(vez>21 &&vez%2==0){//Comienza su movimiento normal
-    			if(pacman.getComible(0)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
-    				auxPacmanI=5;
-    				auxPacmanJ=5;
-				}
-    			if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
-    				distancias[0]=distancia(posI-1, posJ, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Arriba
-    			else 
-    				distancias[0]=9999;
-    			if(mapa.getMatrizJuego(posI+1, posJ)!=1) 
-    				distancias[1]=distancia(posI+1, posJ, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Abajo
-    			else 
-    				distancias[1]=9999;
-    			if(mapa.getMatrizJuego(posI, posJ-1)!=1) 
-    				distancias[2]=distancia(posI, posJ-1, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Izquierda
-    			else 
-    				distancias[2]=9999;
-    			if(mapa.getMatrizJuego(posI, posJ+1)!=1) 
-    				distancias[3]=distancia(posI, posJ+1, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Derecha
-    			else 
-    				distancias[3]=9999;
-    			direccion=distanciaMenor(distancias);
-    			cout<<direccion<<endl;
-				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
-					switch(this->direccion){
-	    				case 1://Arriba
-	    					mapa.setDirecciones(1,4);//Apunta hacia arriba en el mapa
-							this->posI-=1;
-							break;
-						case 2://Abajo
-							mapa.setDirecciones(1,3);//Apunta hacia arriba en el mapa
-							this->posI+=1;
-							break;
-						case 3://Izquierda
-							mapa.setDirecciones(1,1);//Apunta hacia arriba en el mapa
-							this->posJ-=1;
-							
-							break;
-						case 4://Derecha
-							mapa.setDirecciones(1,2);//Apunta hacia arriba en el mapa
-							this->posJ+=1;
-							break;
-					}
-					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
-						if(pacman.getPoder() && pacman.getComible(0)){//Se muere el fantasma
-							this->comibles=false;
-							mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
-							this->posI=10;
-							this->posJ=15;//Regresamos el fantasma a su casa
-							mapa.setMatrizJuego(10,15,7);
-							this->sacarFantasmas(mapa);
-							pacman.setComibles(0,false);
-							mapa.setPausaF(0,1);//Está normal el Fantasma, ya no está asustado
-						}
-						else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
-							this->posI=auxI;
-							this->posJ=auxJ;
-							pacman.setMuerto(true);	
-							pacman.setPoder(false);
-								play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
-						}
-						
-					}
-					else{//Se encontró cualquier otra cosa
-						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
-						mapa.setMatrizJuego(this->posI,this->posJ,7);
-						if(valorPre!=7 && valorPre!=8 && valorPre!=9 && valorPre!=10)
-							mapa.setMatrizJuego(auxI,auxJ,valorPre);
-						else
-							mapa.setMatrizJuego(auxI,auxJ,2);
-					}		
-				} 		
-			}
+    	if(vez==21){//Lo sacamos de su casa por primera vez
+    		this->sacarFantasmas(mapa);
+    		mapa.setMatrizJuego(10,15,2);
 		}
+    	else if(vez>21 &&vez%1==0){//Comienza su movimiento normal
+    		if(pacman.getComible(0)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
+    			auxPacmanI=5;
+    			auxPacmanJ=5;
+			}
+    		if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
+    			distancias[0]=distancia(posI-1, posJ, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Arriba
+    		else 
+    			distancias[0]=9999;
+    		if(mapa.getMatrizJuego(posI+1, posJ)!=1) 
+    			distancias[1]=distancia(posI+1, posJ, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Abajo
+    		else 
+    			distancias[1]=9999;
+    		if(mapa.getMatrizJuego(posI, posJ-1)!=1) 
+    			distancias[2]=distancia(posI, posJ-1, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Izquierda
+    		else 
+    			distancias[2]=9999;
+    		if(mapa.getMatrizJuego(posI, posJ+1)!=1) 
+    			distancias[3]=distancia(posI, posJ+1, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Derecha
+    		else 
+    			distancias[3]=9999;
+    		direccion=distanciaMenor(distancias);
+			if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
+				this->asignarDireccion(mapa);
+				if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
+					if(pacman.getPoder() && pacman.getComible(0)){//Se muere el fantasma
+						this->comibles=false;
+						mapa.setMatrizJuego(auxI,auxJ,2);//Borramos la posición anterior del fantasma
+						this->posI=10;
+						this->posJ=15;//Regresamos el fantasma a su casa
+						mapa.setMatrizJuego(10,15,7);
+						this->sacarFantasmas(mapa);
+						pacman.setComibles(0,false);
+						mapa.setPausaF(0,1);//Está normal el Fantasma, ya no está asustado
+					}
+					else{//El fantasma mata a Pacman, todos a sus casas y Pacman se reinicia
+						this->posI=auxI;
+						this->posJ=auxJ;
+						pacman.setMuerto(true);	
+						pacman.setPoder(false);
+						play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
+					}	
+				}
+				else{//Se encontró cualquier otra cosa
+					valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
+					mapa.setMatrizJuego(this->posI,this->posJ,7);
+					if(valorPre!=7 && valorPre!=8 && valorPre!=9 && valorPre!=10)
+						mapa.setMatrizJuego(auxI,auxJ,valorPre);
+					else
+						mapa.setMatrizJuego(auxI,auxJ,2);
+				}		
+			}
+		} 		
+	}
 };
 class Pinky : public Fantasmas{//ID: 9
 public:
@@ -301,24 +280,7 @@ public:
 					}while(!this->movimientoValido(mapa));
 				}
 				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
-					switch(this->direccion){
-	    				case 1://Arriba
-	    					mapa.setDirecciones(3,4);//Apunta hacia arriba en el mapa
-							this->posI-=1;
-							break;
-						case 2://Abajo
-							mapa.setDirecciones(3,3);//Apunta hacia arriba en el mapa
-							this->posI+=1;
-							break;
-						case 3://Izquierda
-							mapa.setDirecciones(3,1);//Apunta hacia arriba en el mapa
-							this->posJ-=1;
-							break;
-						case 4://Derecha
-							mapa.setDirecciones(3,2);//Apunta hacia arriba en el mapa
-							this->posJ+=1;
-							break;
-					}
+					this->asignarDireccion(mapa);
 					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
 						if(pacman.getPoder() && pacman.getComible(2)){//Se muere el fantasma
 							this->comibles=false;
@@ -386,25 +348,7 @@ public:
     				distancias[3]=9999;
     			direccion=distanciaMenor(distancias);
 				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
-					switch(this->direccion){
-	    				case 1://Arriba
-	    					mapa.setDirecciones(2,4);//Apunta hacia arriba en el mapa
-							this->posI-=1;
-							break;
-						case 2://Abajo
-							mapa.setDirecciones(2,3);//Apunta hacia arriba en el mapa
-							this->posI+=1;
-							break;
-						case 3://Izquierda
-							mapa.setDirecciones(2,1);//Apunta hacia arriba en el mapa
-							this->posJ-=1;
-							
-							break;
-						case 4://Derecha
-							mapa.setDirecciones(2,2);//Apunta hacia arriba en el mapa
-							this->posJ+=1;
-							break;
-					}
+					this->asignarDireccion(mapa);
 					if(mapa.getMatrizJuego(this->posI,this->posJ)==0){//Se encontró con el Pacman, hay que checar si el poder del pacman está activo o no
 						if(pacman.getPoder() && pacman.getComible(1)){//Se muere el fantasma
 							this->comibles=false;

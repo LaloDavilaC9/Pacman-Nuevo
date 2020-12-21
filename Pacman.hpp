@@ -34,6 +34,22 @@ class Pacman {
 		void setMato(int x){
 			this->mato=x;
 		}
+		void asignarDireccion(int &auxI,int &auxJ){
+			switch(this->direccion){
+				case 1://Arriba
+					auxI=this->posI-1;
+					break;
+				case 2://Abajo
+					auxJ=this->posI+1;
+					break;
+				case 3://Izquierda
+					auxJ=this->posJ-1;
+					break;
+				case 4://Derecha
+					auxJ=this->posJ+1;
+					break;
+			}
+		}
 };
 
 Pacman::Pacman(int nivel) {
@@ -70,20 +86,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				else{//Pacman podría perder una vida, pero hay que validar primero
 					auxI=this->posI;
 					auxJ=this->posJ;
-					switch(direccion){
-						case 1://Arriba
-							auxI=this->posI-1;
-							break;
-						case 2://Abajo
-							auxI=this->posI+1;
-							break;
-						case 3://Izquierda
-							auxJ=this->posJ-1;
-							break;
-						case 4://Derecha
-							auxJ=this->posJ+1;
-							break;
-					}
+					this->asignarDireccion(auxI,auxJ);
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder)//El poder está desactivado, por lo tanto Pacman pierde una vida
 						this->setMuerto(true);
@@ -121,20 +124,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				else{//Pacman podría perder una vida, pero hay que validar primero
 					auxI=this->posI;
 					auxJ=this->posJ;
-					switch(direccion){
-						case 1://Arriba
-							auxI=this->posI-1;
-							break;
-						case 2://Abajo
-							auxI=this->posI+1;
-							break;
-						case 3://Izquierda
-							auxJ=this->posJ-1;
-							break;
-						case 4://Derecha
-							auxJ=this->posJ+1;
-							break;
-					}
+					this->asignarDireccion(auxI,auxJ);
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder)//El poder está desactivado, por lo tanto Pacman pierde una vida
 						this->setMuerto(true);
@@ -172,20 +162,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				else{//Pacman podría perder una vida, pero hay que validar primero
 					auxI=this->posI;
 					auxJ=this->posJ;
-					switch(direccion){
-						case 1://Arriba
-							auxI=this->posI-1;
-							break;
-						case 2://Abajo
-							auxI=this->posI+1;
-							break;
-						case 3://Izquierda
-							auxJ=this->posJ-1;
-							break;
-						case 4://Derecha
-							auxJ=this->posJ+1;
-							break;
-					}
+					this->asignarDireccion(auxI,auxJ);
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder)//El poder está desactivado, por lo tanto Pacman pierde una vida
 						this->setMuerto(true);
@@ -222,20 +199,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 				else{//Pacman podría perder una vida, pero hay que validar primero
 					auxI=this->posI;
 					auxJ=this->posJ;
-					switch(direccion){
-						case 1://Arriba
-							auxI=this->posI-1;
-							break;
-						case 2://Abajo
-							auxI=this->posI+1;
-							break;
-						case 3://Izquierda
-							auxJ=this->posJ-1;
-							break;
-						case 4://Derecha
-							auxJ=this->posJ+1;
-							break;
-					}
+					this->asignarDireccion(auxI,auxJ);
 					buscar=mapa.getMatrizJuego(auxI,auxJ);//[auxI][auxJ];//Ya estamos enterados de qué Fantasma fue el que provocó que Pacman estuviera en esta instancia. El "*pQuien" se modificó en la función morirPacman, pero por practicidad lo metemos a una variable tipo INT
 					if(!this->poder)//El poder está desactivado, por lo tanto Pacman pierde una vida
 						this->setMuerto(true);
@@ -292,25 +256,13 @@ bool Pacman::movimientoValido(Mapa &mapa) {
     }
 }
 void Pacman::tienePoder(Mapa &mapa) {
+	SAMPLE *sonidoFruta=load_sample("Elementos\\pacman-fruta.wav");//Carga el sonido de la fruta
 	int auxI,auxJ;
 	auxI=this->posI;
 	auxJ=this->posJ;
 	if(this->poder)//Tiene poder, debemos decrementarle al contador
 		this->contPoder--;
-	switch(direccion){
-		case 1://Arriba
-			auxI=this->posI-1;
-			break;
-		case 2://Abajo
-			auxI=this->posI+1;
-			break;
-		case 3://Izquierda
-			auxJ=this->posJ-1;
-			break;
-		case 4://Derecha
-			auxJ=this->posJ+1;
-			break;
-	}
+	this->asignarDireccion(auxI,auxJ);
 	if(mapa.getMatrizJuego(auxI,auxJ)==6){
 		this->contPoder=this->duracionPoder;
 		this->poder=true;
@@ -320,6 +272,9 @@ void Pacman::tienePoder(Mapa &mapa) {
 		mapa.setPausaF(1,0);
 		mapa.setPausaF(2,0);
 		mapa.setPausaF(3,0);
+	}
+	else if(mapa.getMatrizJuego(auxI,auxJ)==4){//Comió una fruta
+		play_sample(sonidoFruta,200,150,1000,0);
 	}
 	if(this->contPoder==0){//Se acabó el poder
 		mapa.setPausaF(0,0);
@@ -343,21 +298,7 @@ void Pacman::puntaje(Mapa &mapa){
 			}
 		}
 	}
-	switch(direccion){
-		case 1://Arriba
-			auxI=this->posI-1;
-			break;
-		case 2://Abajo
-			auxI=this->posI+1;
-			break;
-		case 3://Izquierda
-			auxJ=this->posJ-1;
-			break;
-		case 4://Derecha
-			auxJ=this->posJ+1;
-			break;		
-	}
-	
+	this->asignarDireccion(auxI,auxJ);
     if(mapa.getMatrizJuego(auxI,auxJ)==7 || mapa.getMatrizJuego(auxI,auxJ)==8 || mapa.getMatrizJuego(auxI,auxJ)== 9 || mapa.getMatrizJuego(auxI,auxJ)==10){//Si pacman se ha comido una pastilla y hay un fantasma...
 	 	if(this->poder)//El poder está activo
 	 		mapa.setPuntuacionTotal(mapa.getPuntuacionTotal()+20);
@@ -376,20 +317,7 @@ bool Pacman::morirPacman(Mapa &mapa){
 	int auxI,auxJ;
 	auxI=this->posI;
 	auxJ=this->posJ;
-	switch(direccion){
-		case 1://Arriba
-			auxI=this->posI-1;
-			break;
-		case 2://Abajo
-			auxI=this->posI+1;
-			break;
-		case 3://Izquierda
-			auxJ=this->posJ-1;
-			break;
-		case 4://Derecha
-			auxJ=this->posJ+1;
-			break;
-	}
+	this->asignarDireccion(auxI,auxJ);
 	if(mapa.getMatrizJuego(auxI,auxJ)==7 || mapa.getMatrizJuego(auxI,auxJ)==8 || mapa.getMatrizJuego(auxI,auxJ)==9 || mapa.getMatrizJuego(auxI,auxJ)==10)//Pacman podría morir, hay que verificar la información en el movimiento del Pacman
 		return true;
 	return false;

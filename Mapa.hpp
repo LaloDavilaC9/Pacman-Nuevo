@@ -1,12 +1,10 @@
 #ifndef MAPA_H_INCLUDED
 	#include "Jugadores.hpp"
 #define MAPA_H_INCLUDED
-
 #define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
 //#define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
-
 class Pacman;
 class Clyde;
 class Blinky;
@@ -625,6 +623,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			}
 		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa, al salir significa que o perdió o hay un cambio de nivel
 		pacman.setPoder(false);//Borramos el poder por en caso de que al salir del nivel anterior lo tuviera
+		cout<<"Vez fruta reinicia a cero"<<endl;
 		vezFruta=0;//Reiniciamos este contador para que podamos volver a imprimir la fruta en el siguiente.
 		this->cambioNivel=false;
 		this->puntuacionTotal=0;

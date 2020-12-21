@@ -94,7 +94,7 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 				 newkey = readkey();//Almacenamos el valor
 				 ASCII = newkey & 0xff;//Convertimos lo almacenado
 				if(ASCII>=32 && ASCII <=126) {//Validamos el ingreso de solo caracteres permitidos
-					if(indice<20-1) {//Validamos que el usuario no ingrese más caracteres de los permitidos
+					if(indice<12-1) {//Validamos que el usuario no ingrese más caracteres de los permitidos
 						p[indice]=ASCII;//Metemos el caracter ingresado al vector
 						indice++;
 						p[indice]='\0';//Asignamos el fin de línea
@@ -374,6 +374,7 @@ void HistorialJugadores::ganadores() {
 		do{
 			blit(advertencia,screen,0,0,0,0,900,600);
 		}while(!key[KEY_ESC]);
+		return;
 	}
 	archivo.seekg(0,ios::end);
 	int tamano=archivo.tellg()/sizeof(Jugador);
@@ -387,32 +388,31 @@ void HistorialJugadores::ganadores() {
     sort(aux.begin(), aux.end(), compare);
     while (!salir) {
         blit(buffer, screen, 0, 0, 0, 0, 900, 600);
-        if(mouse_x>=17 && mouse_x<=257 && mouse_y>=495 && mouse_y<=581) {
+        if(mouse_x>=17 && mouse_x<=400 && mouse_y>=495 && mouse_y<=581) {
             blit(regresar, buffer, 0, 0, 0, 0, 900, 600);        
-            if(mouse_b & 1) {
+            if(mouse_b & 1)
                 salir=true;
-            }
-        } else {
+        } 
+		else 
             blit(mejoresPuntuaciones, buffer, 0, 0, 0, 0, 900, 600);
-        }
         
         if(aux.size()==1){
-        	textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
-        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);  
+     	   	textprintf_ex(buffer, font1, 340, 350, makecol(253, 214, 94),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 340, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
 		}
         else if(aux.size()==2){
-           	textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
-        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
-        	textprintf_ex(buffer, font1, 308, 240, makecol(0, 255, 0),-1, "%s",aux[1].nombreU);
-        	textprintf_ex(buffer, font1, 520, 240, makecol(0, 255, 0),-1, "%i",aux[1].puntos);
+          	textprintf_ex(buffer, font1, 405, 350, makecol(253, 214, 94),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 405, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
+            textprintf_ex(buffer, font1, 187, 410, makecol(237, 127, 52),-1, "%s",aux[1].nombreU);
+        	textprintf_ex(buffer, font1, 187, 435, makecol(255, 255, 255),-1, "%i",aux[1].puntos);
 		}
 		else if(aux.size()>=3){
-            textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
-        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
-            textprintf_ex(buffer, font1, 308, 240, makecol(0, 255, 0),-1, "%s",aux[1].nombreU);
-        	textprintf_ex(buffer, font1, 520, 240, makecol(0, 255, 0),-1, "%i",aux[1].puntos);
-        	textprintf_ex(buffer, font1, 308, 280, makecol(0, 0, 255),-1, "%s",aux[2].nombreU);
-        	textprintf_ex(buffer, font1, 520, 280, makecol(0, 0, 255),-1, "%i",aux[2].puntos);
+            textprintf_ex(buffer, font1, 340, 350, makecol(253, 214, 94),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 340, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
+            textprintf_ex(buffer, font1, 187, 410, makecol(237, 127, 52),-1, "%s",aux[1].nombreU);
+        	textprintf_ex(buffer, font1, 187, 435, makecol(255, 255, 255),-1, "%i",aux[1].puntos);
+        	textprintf_ex(buffer, font1, 540, 400, makecol(181, 185, 196),-1, "%s",aux[2].nombreU);
+        	textprintf_ex(buffer, font1, 540, 425, makecol(255, 255, 255),-1, "%i",aux[2].puntos);
 		}
     }
     destroy_bitmap(buffer);

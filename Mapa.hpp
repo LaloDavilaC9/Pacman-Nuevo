@@ -3,7 +3,6 @@
 #define MAPA_H_INCLUDED
 #define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
-//#define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
 class Pacman;
 class Clyde;
@@ -624,7 +623,6 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			}
 		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa, al salir significa que o perdió o hay un cambio de nivel
 		pacman.setPoder(false);//Borramos el poder por en caso de que al salir del nivel anterior lo tuviera
-		cout<<"Vez fruta reinicia a cero"<<endl;
 		vezFruta=0;//Reiniciamos este contador para que podamos volver a imprimir la fruta en el siguiente.
 		this->cambioNivel=false;
 		this->puntuacionTotal=0;
@@ -679,22 +677,23 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		//Mostramos la pantalla final con las estadísticas finales
 		do{
 			blit(this->vectorMotorJuego[0], this->buffer, 0, 0, 0, 0, 900, 660);
-			textprintf_ex(buffer, font2, 480, 160, makecol(255, 0, 0),-1, "%i",puntosScoreFinal);
+			textprintf_ex(buffer, font2, 495, 160, makecol(255, 0, 0),-1, "%i",puntosScoreFinal);
 			textprintf_ex(buffer, font2, 570, 235, makecol(255, 0, 0),-1, "%i",l);
 			blit(this->buffer, screen, 0, 0, 0, 0, 960, 660);			
 		}while(!key[KEY_ESC]);
 		blit(this->buffer, screen, 0, 0, 0, 0, 960, 660);	
 		l=0;
+		auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Se guarda por última vez la información del usuario	
 	}
 	else if(perdedor){//El usuario perdió el juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
-			clear_keybuf();//Borramos el buffer de entrada del teclado
-				clear(buffer);
-				do{
-					blit(vectorMotorJuego[14], buffer, 0, 0, 0, 0, 900, 660);
-					blit(buffer, screen, 0, 0, 0, 0, 960, 660);
-				}while(!key[KEY_ESC]);
+		auxiliarArchivo.modificarInformacion(*jugadorActual,-1);//Se guarda por última vez la información del usuario	
+		clear_keybuf();//Borramos el buffer de entrada del teclado
+			clear(buffer);
+			do{
+				blit(vectorMotorJuego[14], buffer, 0, 0, 0, 0, 900, 660);
+				blit(buffer, screen, 0, 0, 0, 0, 960, 660);
+			}while(!key[KEY_ESC]);
 	}
-	auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Se guarda por última vez la información del usuario	
 	set_volume(45, 45);//Reducimos el nivel de volumen al original
 	clear_keybuf();//Borramos el buffer*/
 	clear(this->buffer);

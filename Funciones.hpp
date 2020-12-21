@@ -200,11 +200,13 @@ void menu(int Opcion) {
 					OpcionJuego=MiniPortada();
 					switch (OpcionJuego) {
 						case NuevoJuego:
+							clear_keybuf();//Borramos el buffer de entrada del teclado
 							jugador=registro.registroEnArchivo();//Un nuevo usuario fue registrado en el archivo
 							if(jugador->getNom().size()!=0 && jugador->getId()!=-1)
 								mapa.motorJuego(jugador);
 							break;
 						case ContinuarJuego:
+							clear_keybuf();//Borramos el buffer de entrada del teclado
 							jugador=registro.iniciarSesion();
 							if(jugador->getNom().size()!=0 && jugador->getId()!=-1){
 								mapa.motorJuego(jugador);

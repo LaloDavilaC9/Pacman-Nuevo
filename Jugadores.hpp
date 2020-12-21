@@ -86,8 +86,8 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 	registro=load_bitmap("Elementos\\FotoRegistroInicio.bmp", NULL);
 	continuar=load_bitmap("Elementos\\FotoRegistro.bmp", NULL);
 	blit(registro, screen, 0, 0, 0, 0, 900, 600);
+	strcpy(p,"                        ");
 	clear_keybuf();//Borramos el buffer de entrada del teclado
-	strcpy(p,"                       ");
 	while(!salida) {
 		do {
 			vline(screen, (indice*8)+335, 99, 107, AZUL);//Aparece el cursor para escribir
@@ -128,6 +128,7 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 			jug->setNombre(auxNomb);
 			textout_ex(screen, font, p, 335, 99,AZUL, 0);
 			memset(p,255,'\0');
+			cout<<"P es en nombre "<<p<<endl;
 		} while(!usuarioLibre);//Sale cuando se le da un enter y el usuario es válido	
 		indice=0;
 		clear_keybuf();
@@ -345,8 +346,10 @@ void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntos
     for(int i=0;i<tamano;i++){
        	archivo.read(reinterpret_cast<char*>(&nuevosDatos), sizeof(Jugador));
       	if(jugadorCambio.getId()==nuevosDatos.id){
-      		cout<<"Nuevos datos trae "<<nuevosDatos.puntos<<" + "<<jugadorCambio.getPuntos()<<" + "<<puntosExtra<<endl;
-            nuevosDatos.puntos+=jugadorCambio.getPuntos()+puntosExtra;
+      		if(puntosExtra==-1)//El jugador perdió, hay que borrarle todos sus puntos
+      			nuevosDatos.puntos=0;
+      		else
+        		nuevosDatos.puntos+=jugadorCambio.getPuntos()+puntosExtra;
             nuevosDatos.vidas=jugadorCambio.getVidas();
             nuevosDatos.nivel=jugadorCambio.getNivel();
             nuevosDatos.id=jugadorCambio.getId();

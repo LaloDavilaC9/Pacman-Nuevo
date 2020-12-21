@@ -1,8 +1,8 @@
 #pragma once
-class Mapa;
 #include <cmath>
 #include <vector>
 #include <algorithm>
+class Mapa;
 class Fantasmas {
 public:
     int id, posI, posJ, direccion;
@@ -64,12 +64,10 @@ public:
 		return indi;
 	}
 };
-
 #include "Mapa.hpp"
 void Fantasmas::sacarFantasmas(Mapa &mapa){
 	//En esta función, sacamos a los fantasmas de forma validada para que los ponga en la primer posición disponible
 	int i=7,j,k=12,band=0;
-	//buscarPosicion(matrizJuego,numReiniciar,vecPos);
 	mapa.setMatrizJuego(this->posI,this->posJ,2);//Posición borrada
 	for(j=12;j<18;j++){
 		if(mapa.getMatrizJuego(i,j)==2 || mapa.getMatrizJuego(i,j)==5){//Posición libre para avanzar			
@@ -106,19 +104,16 @@ void Fantasmas::sacarFantasmas(Mapa &mapa){
 		}
 	}
 }
-
 class Clyde : public Fantasmas { //ID = 10  Naranja
 	public:
 		Clyde() : Fantasmas(){}
 		Clyde(int id,int i, int j) : Fantasmas(id,i,j){}
     	void movimientoNormal(Mapa &mapa, int vez,Pacman &pacman){
-    	
     		int auxI=this->posI,auxJ=this->posJ,valorPre=2;
     		if(vez==6){//Lo sacamos de su casa por primera vez
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(10,14,2);
 			}
-    			
     		else if(vez>6){//Comienza su movimiento normal
     			srand(time(NULL));
 				this->direccion=rand()%4+1;//Generamos random un número para que se mueva 1=Derecha 2=Izquierda 3=Arriba 4=Abajo
@@ -160,7 +155,6 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
 							pacman.setPoder(false);
 							play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
 						}
-						
 					}
 					else{//Se encontró cualquier otra cosa
 						valorPre=mapa.getMatrizJuego(this->posI,this->posJ);//Guardamos el valor que traía antes
@@ -173,10 +167,6 @@ class Clyde : public Fantasmas { //ID = 10  Naranja
 				}
 			}
 		}
-		/*
-    	void movimientoPersecucion(){
-    		cout<<"Holi"<<endl;
-		}*/
 };
 class Blinky : public Fantasmas { //ID = 7 Rojo
 public:
@@ -189,13 +179,11 @@ public:
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(10,15,2);
 			}
-    			
     		else if(vez>21 &&vez%2==0){//Comienza su movimiento normal
-    			if(pacman.getComible(1)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
+    			if(pacman.getComible(0)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
     				auxPacmanI=5;
     				auxPacmanJ=5;
 				}
-				
     			if(mapa.getMatrizJuego(posI-1, posJ)!=1) 
     				distancias[0]=distancia(posI-1, posJ, pacman.getI()-auxPacmanI, pacman.getJ()-auxPacmanJ);//Arriba
     			else 
@@ -265,8 +253,6 @@ public:
 				} 		
 			}
 		}
-    //void movimientoPersecucion();
-    //void movimientoHuida();
 };
 class Pinky : public Fantasmas{//ID: 9
 public:
@@ -281,8 +267,8 @@ public:
     			mapa.setMatrizJuego(9,14,2);
 			}
     			
-    		else if(vez>41 && vez%3==0){//Comienza su movimiento normal
-	    		if(pacman.getComible(1)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
+    		else if(vez>41 && vez%2==0){//Comienza su movimiento normal
+	    		if(pacman.getComible(2)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
 	    			auxPacmanI=-5;
 	    			auxPacmanJ=-5;
 				}
@@ -314,7 +300,6 @@ public:
 						this->direccion++;
 					}while(!this->movimientoValido(mapa));
 				}
-				//cout<<"Direccion es "<<direccion<<endl;
 				if(this->movimientoValido(mapa)){//El fantasma se puede mover libremente
 					switch(this->direccion){
 	    				case 1://Arriba
@@ -350,7 +335,7 @@ public:
 							this->posJ=auxJ;
 							pacman.setMuerto(true);	
 							pacman.setPoder(false);
-								play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
+							play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
 						}
 						
 					}
@@ -378,7 +363,6 @@ public:
     			this->sacarFantasmas(mapa);
     			mapa.setMatrizJuego(9,15,2);
 			}
-    			
     		else if(vez>59 && vez%4==0){//Comienza su movimiento normal
     			if(pacman.getComible(1)){//Pacman tiene poder y el fantasma está asustado porque se lo puede comer
     				auxPacmanI=10;
@@ -453,115 +437,38 @@ public:
 			}
 		}
 };
-
-
 bool Fantasmas::movimientoValido(Mapa &mapa) {
     switch (this->direccion) {
 	    case 1://Arriba
-	        return (mapa.getMatrizJuego(this->posI-1,this->posJ)!=1);   //[posX - 1][posY] != 1 );
+	        return (mapa.getMatrizJuego(this->posI-1,this->posJ)!=1);
 	        break;
 	    case 2://Abajo
-	        return (mapa.getMatrizJuego(this->posI+1,this->posJ)!=1);//(mapa.matrizJuego[posX + 1][posY] != 1 );
+	        return (mapa.getMatrizJuego(this->posI+1,this->posJ)!=1);
 	        break;
 	    case 3://Izquierda, verificación de Teleport de Izquierda a Derecha
 	    	if(this->posI==10 && this->posJ-1==0){
 	    		mapa.setMatrizJuego(10,29,this->id);//Ponemos al fantasma en su nueva posición
-				mapa.setMatrizJuego(10,0,2);//mapa.matrizJuego[10][0]=2;//Borra la posición anterior
-				mapa.setMatrizJuego(10,1,2);//mapa.matrizJuego[10][1]=2;//Borra la posición ANTE Anterior
+				mapa.setMatrizJuego(10,0,2);//Borra la posición anterior
+				mapa.setMatrizJuego(10,1,2);//Borra la posición ANTE Anterior
 				this->posI=10;
 				this->posJ=29;
 				return false;
 			}
-	        return (mapa.getMatrizJuego(this->posI,this->posJ-1)!=1);//(mapa.matrizJuego[posX][posY - 1] != 1 );
+	        return (mapa.getMatrizJuego(this->posI,this->posJ-1)!=1);
 	        break;
 	    case 4://Derecha, verificación de Teleport de Derecha a Izquierda
 	    	if(this->posI==10 && this->posJ+1==29){
 	    		mapa.setMatrizJuego(10,0,this->id);//Ponemos al fantasma en su nueva posición
-				mapa.setMatrizJuego(10,29,2);//mapa.matrizJuego[10][29]=2;//Borra la posición anterior
-				mapa.setMatrizJuego(10,28,2);//mapa.matrizJuego[10][28]=2;//Borra la posición ANTE Anterior
+				mapa.setMatrizJuego(10,29,2);//Borra la posición anterior
+				mapa.setMatrizJuego(10,28,2);//Borra la posición ANTE Anterior
 				this->posI=10;
 				this->posJ=0;
 				return false;
 			}
-	        return (mapa.getMatrizJuego(this->posI,this->posJ+1)!=1);//(mapa.matrizJuego[posX][posY + 1] != 1 );
+	        return (mapa.getMatrizJuego(this->posI,this->posJ+1)!=1);
 	        break;
 	    default:
 	        return false;
 	        break;
     }
 }
-
-
-
-/*
-class Inky : public Fantasmas {
-public:
-    void movimientoNormal();
-    void movimientoPersecucion();
-};
-class Pinky : public Fantasmas {
-public:
-    void movimientoNormal();
-    void movimientoPersecucion();
-};
-*/
-//Implementacion de los metodos de la clase Fantasmas
-/*int* Fantasmas::posiciones() {
-    int* posXY = new int[2];
-    posXY[0] = posX;
-    posXY[1] = posY;
-    return posXY;
-}*/
-/*bool Fantasmas::matarPacman(int* posXY_pacman, bool poderPacman) {
-    return (posX == posXY_pacman[0] && posY == posXY_pacman[1] && !poderPacman);
-}
-bool Fantasmas::movimientoValido(int *matrizJuego[]) {
-    switch (direccion) {
-        case 1:
-            return (matrizJuego[posX - 1][posY] == 2 || matrizJuego[posX - 1][posY] == 5);
-            break;
-        case 2:
-            return (matrizJuego[posX + 1][posY] == 2 || matrizJuego[posX + 1][posY] == 5);
-            break;
-        case 3:
-            return (matrizJuego[posX][posY - 1] == 2 || matrizJuego[posX][posY - 1] == 5);
-            break;
-        case 4:
-            return (matrizJuego[posX][posY + 1] == 2 || matrizJuego[posX][posY + 1] == 5);
-            break;
-        default:
-            return false;
-            break;
-    }
-}
-void Fantasmas::regeneracion() {
-    comibles = false;
-}
-//Implementacion de los metodos de la clase Blinky
-void Blinky::movimientoNormal() {
-
-}
-void Blinky::movimientoPersecucion() {
-
-}
-//Implementacion de los metodos de la clase Clyde
-void Clyde::movimientoNormal() {
-
-}
-void Clyde::movimientoPersecucion() {
-
-}
-//Implementacion de los metodos de la clase Inky
-void Inky::movimientoNormal() {
-
-}
-void Inky::movimientoPersecucion() {
-
-}
-//Implementacion de los metodos de la clase Pinky
-void Pinky::movimientoNormal() {
-
-}
-void Pinky::movimientoPersecucion() {
-
-}*/

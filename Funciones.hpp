@@ -1,7 +1,6 @@
 #include <iostream>
 #include <allegro.h>
 #include "Mapa.hpp"
-
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
 using namespace std;
@@ -96,25 +95,25 @@ int Portada() {
 	while(!salida) {
 		blit(buffer, screen, 0, 0, 0, 0, 960, 620);
 		//Verificación de la ubicaación del Mouse en pantalla
-		if(mouse_x>=295 && mouse_x<=599 && mouse_y>=265 && mouse_y<=335) {
+		if(mouse_x>=200 && mouse_x<=700 && mouse_y>=190 && mouse_y<=250) {
 			blit(Portada1, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;
 				opcion=1;
 			}
-		} else if(mouse_x>=195 && mouse_x<=717 && mouse_y>=360 && mouse_y<=429) {
+		} else if(mouse_x>=100 && mouse_x<=800 && mouse_y>=280 && mouse_y<=340) {
 			blit(Portada2, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;
 				opcion=2;
 			}
-		} else if(mouse_x>=373 && mouse_x<=527 && mouse_y>=452 && mouse_y<=517) {
+		} else if(mouse_x>=310 && mouse_x<=540 && mouse_y>=370 && mouse_y<=430) {
 			blit(Portada3, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;
 				opcion=3;
 			}
-		} else if(mouse_x>=388 && mouse_x<=503 && mouse_y>=541 && mouse_y<=593) {
+		} else if(mouse_x>=340 && mouse_x<=560 && mouse_y>=470 && mouse_y<=540) {
 			blit(Portada4, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;
@@ -143,19 +142,19 @@ int MiniPortada() {
 	while(!salida) {
 		blit(buffer, screen, 0, 0, 0, 0, 960, 620);
 		//Verificación de la posición del Mouse en pantalla
-		if(mouse_x>=301 && mouse_x<=608 && mouse_y>=63 && mouse_y<=131) {
+		if(mouse_x>=200 && mouse_x<=700 && mouse_y>=100 && mouse_y<=170) {
 			blit(MiniPortada1, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;
 				Opcion1=1;
 			}
-		} else if(mouse_x>=264 && mouse_x<=654 && mouse_y>=162 && mouse_y<=236) {
+		} else if(mouse_x>=200 && mouse_x<=700 && mouse_y>=200 && mouse_y<=270) {
 			blit(MiniPortada2, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;
 				Opcion1=2;
 			}
-		} else if(mouse_x>=17 && mouse_x<=233 && mouse_y>=459 && mouse_y<=534) {
+		} else if(mouse_x>=15 && mouse_x<=400 && mouse_y>=480 && mouse_y<=560) {
 			blit(MiniPortada3, buffer, 0, 0, 0, 0, 960, 620);		
 			if(mouse_b & 1) {
 				salida=true;

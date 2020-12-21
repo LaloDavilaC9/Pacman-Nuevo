@@ -4,11 +4,11 @@
 #include "Mapa.hpp"
 using namespace std;
 int main(){
-	init();
 	int Opcion, Salir=4;
+	init();//Función de Allegro para iniciarlo
 	do {
-		Opcion=Portada();
-		menu(Opcion);
+		Opcion=Portada();//Mandamos llamar a la interfaz de pportada
+		menu(Opcion);//Controlamos todo el menú
 	} while (Opcion!=Salir);
 	deinit();
 	return 0;

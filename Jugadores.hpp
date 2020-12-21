@@ -33,7 +33,6 @@ public:
     unsigned int getNivel(){return this->nivel;}
     
 };
-
 class HistorialJugadores {
     vector <Jugadores> tRegistros;
 public:
@@ -44,10 +43,7 @@ public:
     void modificarInformacion(Jugadores,int);
     void ganadores();
 };
-
 bool compare(Jugador & x, Jugador& y);
-
-//Miembos de la clase Jugadores
 Jugadores::Jugadores() {
     this->vidas = 3;
     this->puntos = 0;
@@ -73,9 +69,9 @@ bool Jugadores::verificarRepeticionesUsuario() {
     archivo.close();
     return false;
 }
-//Miembros de la clase HistorialJugadores
 Jugadores *HistorialJugadores::registroEnArchivo(){
 	Jugador auxiliarArchivo;
+	unsigned int canReg;
 	char ASCII, p[255];
 	int newkey,indice=0;
 	bool salida=false,salida2=false,usuarioLibre=false;
@@ -88,7 +84,6 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 		 archivo.open("Elementos\\DatosJugadores.dat",ios::binary|ios::out);//Lo crea
 	registro=load_bitmap("Elementos\\FotoRegistroInicio.bmp", NULL);
 	continuar=load_bitmap("Elementos\\FotoRegistro.bmp", NULL);
-
 	blit(registro, screen, 0, 0, 0, 0, 900, 600);
 	clear_keybuf();//Borramos el buffer de entrada del teclado
 	strcpy(p,"                       ");
@@ -123,18 +118,14 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 				//Verificamos si ese nombre ya lo está usando algún otro usuario
 				if(jug->verificarRepeticionesUsuario())//Usuario repetido
 					textprintf_ex(screen, font, 335, 139, AZUL,-1, "¡Ups! Nombre ya existente, intente con uno diferente");
-					//textout(screen, font, "¡Ups! nombre ya existente, intente con uno diferente", 335, 139, AZUL);
 				else{
 					textprintf_ex(screen, font, 335, 139, AZUL,-1, "                                                    ");
-					//textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
 					usuarioLibre=true;
 				}
 			}
 			auxNomb=p;
 			jug->setNombre(auxNomb);
-			//textprintf_ex(screen, font, 335, 99, AZUL,-1, "%s",p);
 			textout_ex(screen, font, p, 335, 99,AZUL, 0);
-			//textout(screen, font, p, 335, 99, AZUL);
 			memset(p,255,'\0');
 		} while(!usuarioLibre);//Sale cuando se le da un enter y el usuario es válido	
 		indice=0;
@@ -172,26 +163,18 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 			}
 			auxPass=p;
 			jug->setPassword(auxPass);
-			//textprintf_ex(screen, font, 335, 210, AZUL,-1, "%s",p);
 			textout_ex(screen, font, p, 335, 210,AZUL, 0);
-			//textout(screen, font, p, 335, 210, AZUL);
 			memset(p,255,'\0');
 		} 
 		while(salida2==false);
 		
-		//*pIdentificacion=usuario.id=secuenciaId(registroUsuarios);//Verifica cuál fue el último ID 
-		//*pVidas=3;//Inicializamos al usuario con 3 vidas
-
 		if(jug->getNom().size()!=0 && jug->getPass().size()!=0) {
 			salida=true;
 		}//Salimos del ciclo que controla la funciï¿½n
 	}
-
-	unsigned int canReg;
 	archivo.seekp(0, ios::end);
     canReg=archivo.tellg()/sizeof(Jugador);
 	jug->setID(canReg+1);
-	cout<<"Id nuevo debe de ser "<<jug->getId()<<endl;
 	jug->setVidas(3);
 	jug->setPuntos(0);
 	strcpy(auxiliarArchivo.nombreU,jug->getNom().c_str());
@@ -204,7 +187,6 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
     archivo.close();
 	return jug;	
 }
-
 Jugadores *HistorialJugadores::iniciarSesion(){
 	Jugador auxiliarArchivo;
 	char ASCII, p[255];
@@ -328,7 +310,6 @@ Jugadores *HistorialJugadores::iniciarSesion(){
     archivo.close();
 	return jug;	
 }
-
 bool HistorialJugadores::validarContrasena(Jugadores *jug){
 	fstream archivo;
     Jugador aux;
@@ -352,16 +333,13 @@ bool HistorialJugadores::validarContrasena(Jugadores *jug){
     archivo.close();
     return false;
 }
-
 void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntosExtra) {
     Jugador nuevosDatos;
     fstream archivo;
     int pos;
     archivo.open("Elementos\\DatosJugadores.dat", ios::binary | ios::in | ios::out);
-    if (!archivo) {
-        //cout << "Hay un error en el archivo de almacenamiento" << endl;
+    if (!archivo)
         return;
-    }
     archivo.seekg(0,ios::end);
 	int tamano=archivo.tellg()/sizeof(Jugador);
     archivo.seekg(0,ios::beg);
@@ -369,8 +347,6 @@ void HistorialJugadores::modificarInformacion(Jugadores jugadorCambio,int puntos
     for(int i=0;i<tamano;i++){
        	archivo.read(reinterpret_cast<char*>(&nuevosDatos), sizeof(Jugador));
       	if(jugadorCambio.getId()==nuevosDatos.id){
-      		//nuevosDatos.setPuntos(jugadorCambio.getPuntos()+puntosExtra);
-            //nuevosDatos.setVidas(jugadorCambio.getVidas());
             nuevosDatos.puntos=jugadorCambio.getPuntos()+puntosExtra;
             nuevosDatos.vidas=jugadorCambio.getVidas();
             nuevosDatos.nivel=jugadorCambio.getNivel();
@@ -401,7 +377,6 @@ void HistorialJugadores::ganadores() {
 	}
 	archivo.seekg(0,ios::end);
 	int tamano=archivo.tellg()/sizeof(Jugador);
-	cout<<"El tamano del archivo es "<<tamano<<endl;
     archivo.seekg(0,ios::beg);
 
     for(int i=0;i<tamano;i++){
@@ -423,46 +398,26 @@ void HistorialJugadores::ganadores() {
         
         if(aux.size()==1){
         	textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
-        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
-          	//textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
-            //textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
-            
+        	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);  
 		}
         else if(aux.size()==2){
-            //textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
-           	//textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
            	textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
         	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
-        	
         	textprintf_ex(buffer, font1, 308, 240, makecol(0, 255, 0),-1, "%s",aux[1].nombreU);
         	textprintf_ex(buffer, font1, 520, 240, makecol(0, 255, 0),-1, "%i",aux[1].puntos);
-        	
-           	//textprintf(buffer, font1, 308, 240, makecol(0, 255, 0), "%s", aux[1].nombreU);
-            //textprintf(buffer, font1, 520, 240, makecol(0, 255, 0), "%i", aux[1].puntos);
 		}
 		else if(aux.size()>=3){
-			//textprintf(buffer, font1, 308, 200, makecol(255, 0, 0), "%s", aux[0].nombreU);
-           	//textprintf(buffer, font1, 520, 200, makecol(255, 0, 0), "%i", aux[0].puntos);
-           	//textprintf(buffer, font1, 308, 240, makecol(0, 255, 0), "%s", aux[1].nombreU);
-            //textprintf(buffer, font1, 520, 240, makecol(0, 255, 0), "%i", aux[1].puntos);
-            
             textprintf_ex(buffer, font1, 308, 200, makecol(255, 0, 0),-1, "%s",aux[0].nombreU);
         	textprintf_ex(buffer, font1, 520, 200, makecol(255, 0, 0),-1, "%i",aux[0].puntos);
-            
             textprintf_ex(buffer, font1, 308, 240, makecol(0, 255, 0),-1, "%s",aux[1].nombreU);
         	textprintf_ex(buffer, font1, 520, 240, makecol(0, 255, 0),-1, "%i",aux[1].puntos);
-        	
         	textprintf_ex(buffer, font1, 308, 280, makecol(0, 0, 255),-1, "%s",aux[2].nombreU);
         	textprintf_ex(buffer, font1, 520, 280, makecol(0, 0, 255),-1, "%i",aux[2].puntos);
-            
-           	//textprintf(buffer, font1, 308, 280, makecol(0, 0, 255), "%s", aux[2].nombreU);
-       	 	//textprintf(buffer, font1, 520, 280, makecol(0, 0, 255), "%i", aux[2].puntos);
 		}
     }
     destroy_bitmap(buffer);
 }
-
-//Funcion auxiliar de comparacion de puntajes
 bool compare(Jugador& x, Jugador& y) {
+	//Funcion auxiliar de comparacion de puntajes
     return x.puntos > y.puntos;
 }

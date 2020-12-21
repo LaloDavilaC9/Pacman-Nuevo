@@ -2,7 +2,7 @@
 	#include "Jugadores.hpp"
 #define MAPA_H_INCLUDED
 
-#define NIVELMAXIMO 3 //Importante no usar un valor menor a 2 ni mayor a 10
+#define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
 #define AZUL makecol(51, 153, 255)//Color predefinido
 #define NEGRO makecol(0, 0, 0)//Color predefido
@@ -22,15 +22,19 @@ class Mapa {
 		FONT *font1, *font2, *font3;
 	public:
 		Mapa();
+		//Los mapas nos ayudan a crear diferentes matrices, que representan un mapa distinto
 		void mapa_1();
 		void mapa_2();
 		void mapa_3();
-		//int menuPrincipal();
-		//int menuSecundario();
+		//Función que nos ayuda a elegir cuál mapa se cargará
 		void seleccionarMapa(int);
+		//Pintamos toda la matriz, osea el mapa
 		void dibujarMapa(int,bool);
+		//Esta función, genera de forma aleatoria una fruta
 		void ponerFruta();
+		//El motor del juego es donde se desarrolla todo el juego
 		void motorJuego(Jugadores *jugadorActual);
+		//Setters y getters de nuestros atributos
 		void setDirecciones(int pos,int valor){this->direccionesVisuales[pos]=valor;}
 		void setPuntuacionTotal(int valor){this->puntuacionTotal=valor;}
 		int getPuntuacionTotal(){return this->puntuacionTotal;}
@@ -41,26 +45,27 @@ class Mapa {
 		void setMatrizJuego(int i, int j, int valor){this->matrizJuego[i][j]=valor;}
 		int getMatrizJuego(int i, int j){return this->matrizJuego[i][j];}
 		int getSonido(){return this->sonido;}
+		//Esta funciín, regresa a todoos los personajes del juego a su casita, INCLUIDO a Pacman
 		void reiniciarFantasmas(Clyde &,Pacman &, Blinky &blinky,Pinky &,Inky &);
 };
-Mapa::Mapa() {
+Mapa::Mapa() {//Constructor del mapa
 	int i,j;
-	for (i = 0; i < 20; i++) {
-		for (j = 0; j < 30; j++) {
-			matrizJuego[i][j] = 0;
-		}
-	}
-	for(i=0;i<5;i++)
+	for (i = 0; i < 20; i++)//Inicializa la matriz en cero
+		for (j = 0; j < 30; j++) 
+			this->matrizJuego[i][j] = 0;
+		
+	for(i=0;i<5;i++)//El vector de direcciones visuales controla hacia dónde ven los personajes en pantalla
 		this->direccionesVisuales[i]=1;
-	for(i=0;i<4;i++)
+	for(i=0;i<4;i++)//Inicializamos el vector de Pausa en cero, este vector ayuda a la función dibujar mapa
 		this->pPausaF[i]=0;
-	this->frutas=0;
-	this->frutaI=-1;
+	this->frutas=0;//Este contador nos ayuda para pintar las frutas
+	this->frutaI=-1;//Tenemos las posiciones de la fruta, inicializamos en -1 para decirle que no está en el mapa
 	this->frutaJ=-1;
 	this->sonido=0;//Significa sonido Activado
 	this->puntuacionTotal=0;	
-	this->dificultad=0;
-	this->cambioNivel=false;
+	this->dificultad=0;//Esta dificultad dependerá del nivel del jugador actual
+	this->cambioNivel=false;//Nos ayuda a identificar cuándo hay un cambio de nivel
+	//Cargamos previamente todaas las imágenes que utilizaremos en el juego
 	this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_1.bmp", NULL);
 	this->vectorPintarMapa[1]=load_bitmap("Elementos\\Espacio.bmp", NULL);
 	this->vectorPintarMapa[2]=load_bitmap("Elementos\\PuntosChicos.bmp", NULL);
@@ -85,13 +90,14 @@ Mapa::Mapa() {
 	this->vectorMotorJuego[13]=load_bitmap("Elementos\\cargando0.bmp", NULL);
 	this->vectorMotorJuego[14]=load_bitmap("Elementos\\perdiste.bmp", NULL);
 	this->vectorMotorJuego[0]=load_bitmap("Elementos\\Felicidades.bmp", NULL);
+	//Cargamos las tipografías
 	this->font1=load_font("Elementos\\letritas.pcx", NULL, NULL);
 	this->font2=load_font("Elementos\\letritas2.pcx", NULL, NULL);
 	this->font3=load_font("Elementos\\LetritasPoder.pcx",NULL,NULL);
+	//Creamos el buffer principal, es el lienzo donde se imprime la pantalla
 	this->buffer=create_bitmap(960, 660);
 }
 void Mapa::mapa_1() {
-	//vector<vector<Nodo>> redNodos;
 	int matrizJuegoAux[20][30]{
 		//   0 1 2 3 4 5 6 7 8 9 10        15        20        25      29
 			{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},//0
@@ -247,9 +253,9 @@ void Mapa::seleccionarMapa(int nivel) {
 	}
 }
 void Mapa::dibujarMapa(int nivel,bool poderActivo) {
-		switch(nivel){//Seleccionamos la forma del diseño visual de los mapas
+	switch(nivel){//Seleccionamos la forma del diseño visual de los mapas
 		case 1:
-			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_1.bmp", NULL);
+			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_s.bmp", NULL);
 			break;
 		case 2:
 			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_2.bmp", NULL);
@@ -276,7 +282,7 @@ void Mapa::dibujarMapa(int nivel,bool poderActivo) {
 			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_9.bmp", NULL);
 			break;
 	}
-	
+
 	switch(this->direccionesVisuales[0]){//Seleccionamos la dirección en pantalla del Pacman
 		case 1://izquierda
 			this->vectorPintarMapa[8]=load_bitmap("Elementos\\CuerpoPacman_I.bmp", NULL);
@@ -390,29 +396,26 @@ void Mapa::dibujarMapa(int nivel,bool poderActivo) {
 	
 	for(int i=0;i<20;i++){
 		for(int j=0;j<30;j++){
-			if(matrizJuego[i][j]==0){//PacMan
+			if(matrizJuego[i][j]==0)//PacMan
 				draw_sprite(buffer, vectorPintarMapa[8], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==1 || matrizJuego[i][j]==3){//Bloques
+			else if(matrizJuego[i][j]==1)//Bloques
 				draw_sprite(buffer, vectorPintarMapa[0], j*30, i*30+35);
-			}
-			else if(matrizJuego[i][j]==2){//Paso Libre
+			else if(matrizJuego[i][j]==2)//Paso Libre
 				draw_sprite(buffer, vectorPintarMapa[1], j*30, i*30+35);
-			}
-			else if(matrizJuego[i][j]==4){//Frutas
+			else if(matrizJuego[i][j]==4)//Frutas
 				draw_sprite(buffer, vectorPintarMapa[9], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==5){//Puntos  chicos
+			else if(matrizJuego[i][j]==5)//Puntos  chicos
 				draw_sprite(buffer, vectorPintarMapa[2], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==6){//Puntos  grandes
+			else if(matrizJuego[i][j]==6)//Puntos  grandes
 				draw_sprite(buffer, vectorPintarMapa[3], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==7){//Fantasma Blinky
+			else if(matrizJuego[i][j]==7)//Fantasma Blinky
 				draw_sprite(buffer, vectorPintarMapa[4], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==8){//Fantasma Inky
+			else if(matrizJuego[i][j]==8)//Fantasma Inky
 				draw_sprite(buffer, vectorPintarMapa[5], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==9){//Fantasma Pinky
+			else if(matrizJuego[i][j]==9)//Fantasma Pinky
 				draw_sprite(buffer, vectorPintarMapa[6], j*30, i*30+35);
-			}else if(matrizJuego[i][j]==10){//Fantasma Clyde
+			else if(matrizJuego[i][j]==10)//Fantasma Clyde
 				draw_sprite(buffer, vectorPintarMapa[7], j*30, i*30+35);
-			}
 		}
 	}
 }
@@ -421,56 +424,55 @@ void Mapa::ponerFruta() {
 	srand(time(NULL));
 	do {
 		i = rand() % 17 + 1;
-		j = rand() % 27 + 1;
+		j = rand() % 27 + 1; //Creamos las posiciones para poner la fruta, siempre y cuando en esa posición haya un punto chico
 	} while (matrizJuego[i][j] != 5);
 	matrizJuego[i][j] = 4;
 	this->frutaI=i;
 	this->frutaJ=j;
 }
-
 #include "Pacman.hpp"
 #include "Fantasmas.hpp"
 void Mapa::motorJuego(Jugadores *jugadorActual){
 	play_midi(NULL,0);//Frenamos la música del inicio
 	SAMPLE *efecto=load_wav("Elementos\\pacman-song.wav");//Tono de inicio de nivel
-	SAMPLE *muertePacman=load_sample("Elementos\\pacman-dies.wav");
-	MIDI *perderMusic =load_midi("Elementos\\Rosas.mid");
-	MIDI *ganarMusic =load_midi("Elementos\\sam dave - soul man.mid");	
-		
+	SAMPLE *muertePacman=load_sample("Elementos\\pacman-dies.wav");//Sonido de la muerte del Pacman
+	MIDI *perderMusic =load_midi("Elementos\\Rosas.mid");//Sonido de perdedor
+	MIDI *ganarMusic =load_midi("Elementos\\sam dave - soul man.mid");//Sonido de ganador	
 	Pacman pacman(jugadorActual->getNivel());//Creamos a Pacman
+	//Creamos a los fantasmas con sus respectivos datos iniciales
 	Clyde clyde(10,10,14);
 	Blinky blinky(7,10,15);
 	Pinky pinky(9,9,14);
 	Inky inky(8,9,15);
-	HistorialJugadores auxiliarArchivo;
+	HistorialJugadores auxiliarArchivo;//Objeto que nos ayudará a guardar en el archivo
+	//Variables auxiliares
 	int l=0,l1=0,l2=0,vez=0,vezFruta=0,vezCargar=0,puntosScoreFinal,newkey,newkey2;
 	char ASCII,ASCII2;
 	bool x=false,perdedor=false,ganador=false;
+	
 	do{//Incia el Nivel
 		play_sample(efecto,200,150,1000,0);//Efecto de sonido de inicio
-		this->dificultad=50-(jugadorActual->getNivel()*5);
+		this->dificultad=50-(jugadorActual->getNivel()*5);//Calculamos la dificultad con base al nivel del jugador actual
 		this->seleccionarMapa(jugadorActual->getNivel());//Generamos el mapa con el nivel actual
 		this->dibujarMapa(jugadorActual->getNivel(),pacman.getPoder());//Cargamos todo al mapa
 		blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente
-		textprintf_ex(buffer, font1, 400, 0, makecol(255, 255, 255),-1, "¿Listo?");
-		//textprintf(buffer, font1, 400, 0, makecol(255, 255, 255), "Listo? ");//Texto de ¿listo? para antes de comenzar
+		textprintf_ex(buffer, font1, 400, 0, makecol(255, 255, 255),-1, "¿Listo?");//Advertencia de "¿listo?"
 		do{
 			blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos el mapa dentro de este ciclo para que la palabra "listo" aparezca algunos segundos antes de empezar a jugar
 			l++;
 		}while(l!=900);
 		l=0;
 		do{//Ciclo interno  a realizar mientras no haya un cambio de nivel o un perdedor
-			pacman.movimiento(*this,*jugadorActual);
-			if(pacman.getMato()!=0){//El pacman acaba de matar a alguien
+			pacman.movimiento(*this,*jugadorActual);//Detectamos el movimiento del Pacman
+			if(pacman.getMato()!=0){//El pacman acaba de matar a alguien, debemos detectar a quién mató y después sacarlo de su caja
 				if(pacman.getMato()==1){//Mató al fantasma 7
 					blinky.posI=10;
 					blinky.posJ=15;
 					this->matrizJuego[10][15]=7;
 					blinky.sacarFantasmas(*this);
-					
 				}
 				else if(pacman.getMato()==2){//Mató al fantasma 8
-					inky.posI=10;
+					inky.posI=9;
 					inky.posJ=15;
 					this->matrizJuego[9][15]=8;
 					inky.sacarFantasmas(*this);
@@ -487,8 +489,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 					this->matrizJuego[10][14]=10;
 					clyde.sacarFantasmas(*this);	
 				}
-				pacman.setMato(0);
+				pacman.setMato(0);//Regresamos el valor del atributo "mato" a 0
 			}
+			//Los siguientes IF´s no pueden ser compactadoos puesto que es necesario verificar, después de cada movimiento de un fantasma, si el Pacman murió o no. En caso de haber muerto, hay que detectarlo y omitir los movimientos de los demás fantasmas
 			if(!pacman.getMuerto()){
 				clyde.movimientoNormal(*this,vez,pacman);
 			}
@@ -501,12 +504,13 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			if(!pacman.getMuerto()){
 				inky.movimientoNormal(*this,vez,pacman);
 			}
+			//Detectamos la muerte del Pacman
 			if(pacman.getMuerto()){
 				play_sample(muertePacman,200,150,1000,0);//Se activa el sonido de la muerte del Pacman
-				this->reiniciarFantasmas(clyde, pacman, blinky,pinky,inky);
-				vez=0;
-				pacman.setMuerto(false);
-				jugadorActual->setVidas(jugadorActual->getVidas()-1);
+				this->reiniciarFantasmas(clyde, pacman, blinky,pinky,inky);//Volvemos todo a sus posiciones de inicio
+				vez=0;//Este auxiliar nos ayuda a tener una base de "tiempo" compuesta por numero de veces en las que se realiza el ciclo del motor de juego
+				pacman.setMuerto(false);//Reiniciamos el valor del muerto
+				jugadorActual->setVidas(jugadorActual->getVidas()-1);//Restamos una vida al jugador
 				auxiliarArchivo.modificarInformacion(*jugadorActual,0);// Esta validación impide al usuario hacer trampas de salirse a la mitad de un nivel para poder reiniciar sus vidas y le impide incrementar de forma tramposa su puntaje
 			}
 			if(vez%4==0){//Este if controla la animación del Pacman comiendo
@@ -570,7 +574,6 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				if(l2==1){//Con esto sabemos que el Pacman ha perdido su primer vida y se le indica de nuevo la palabra "listo" antes de volver a jugar
 					do{
 						textprintf_ex(screen, font1, 400, 0, makecol(255, 255, 255),-1, "¿Listo?");
-						//textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Listo?      ");
 						l++;
 					}while(l!=900);
 					l=0;
@@ -601,15 +604,12 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 				//Si no la encuentra quiere decir que el Pacman se la comió
 			}
 			this->dibujarMapa(jugadorActual->getNivel(),pacman.getPoder());
-			blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente
+			blit(buffer, screen, 0, 0, 0, 0, 960, 660);//Pintamos lo cargado previamente+
+			//Escribimos en pantalla información estadística
 			textprintf_ex(screen, font1, 0, 0, makecol(255, 153, 51),-1, "Score: %i",this->puntuacionTotal);
 			textprintf_ex(screen, font1, 400, 0, makecol(255, 255, 255),-1, "Nivel: %i",jugadorActual->getNivel());
 			textprintf_ex(screen, font3, 690, 0, makecol(255, 255, 255),-1, "Poder: %ir",this->dificultad);
 			textprintf_ex(screen, font1, 200, 0, makecol(255, 255, 255),-1, "[ESC] Pausa");
-			//textprintf(screen, font1, 0, 0, makecol(255, 153, 51), "Score: %i", this->puntuacionTotal);//Es el encargado de mostrar el Score
-			//textprintf(screen, font1, 400, 0, makecol(255, 255, 255), "Nivel: %i", jugadorActual->getNivel());//Es el encargado de mostrar el nivel actual
-			//textprintf(screen, font3, 690, 0, makecol(255, 255, 255), "Poder: %ir", this->dificultad);//"rep" se refiere a "repeticiones" por lo que 60, por ejemplo, significa que si Pacman toma el poder en ese momento, tardará 60 repeticiones del juego para que termine el poder
-			//textprintf(screen, font1, 200, 0, makecol(255, 255, 255), "[ESC] Pausa");//"rep" se refiere a "repeticiones" por lo que 60, por ejemplo, significa que si Pacman toma el poder en ese momento, tardará 60 repeticiones del juego para que termine el poder
 			vezFruta++;
 			vez++;
 			rest(VELOCIDAD);//Maneja la velocidad del juego. Entre más alto el parámetro, más lento el juego
@@ -619,22 +619,16 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			}
 			if(this->cambioNivel){//Habrá cambio de nivel, hay que guardar
 				puntosScoreFinal=this->puntuacionTotal;//Por fines prácticos, hacemos un respaldo de la puntuación total del nivel	
-				jugadorActual->setPuntos(jugadorActual->getPuntos()+puntosScoreFinal);
-				jugadorActual->setNivel(jugadorActual->getNivel()+1);
-				auxiliarArchivo.modificarInformacion(*jugadorActual,0);
-				//cout<<"Se supone que se guarda la info"<<endl;
+				jugadorActual->setPuntos(jugadorActual->getPuntos()+puntosScoreFinal);//Le cambiamos los puntos al jugador
+				jugadorActual->setNivel(jugadorActual->getNivel()+1);//Cambiamos el nivel
+				auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Guardamos
 			}
 		} while(!perdedor && !this->cambioNivel);//El ciclo interno, de juego por mapa, al salir significa que o perdió o hay un cambio de nivel
-		//*pcomida=0;//Reiniciamos el contador de comida por si estuviera prendido, que no avance con poder al siguiente nivel
-		pacman.setPoder(false);
+		pacman.setPoder(false);//Borramos el poder por en caso de que al salir del nivel anterior lo tuviera
 		vezFruta=0;//Reiniciamos este contador para que podamos volver a imprimir la fruta en el siguiente.
-		//cambioNivel=0;//Reiniciamos a cero esta variable para que el ciclo interno se siga dando
 		this->cambioNivel=false;
-		//*puntuacionTotal=0;//Reseteamos la puntuación
 		this->puntuacionTotal=0;
 		this->reiniciarFantasmas(clyde, pacman, blinky,pinky,inky);
-		//*pNivel+=1;//Aumentamos el nivel en 1
-		//cout<<"Llega"<<endl;
 		if(perdedor){//Reiniciamos el nivel del usuario a 1 y le borramos su puntaje
 			jugadorActual->setNivel(1);
 			jugadorActual->setVidas(3);
@@ -644,7 +638,6 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		else if(jugadorActual->getNivel()==NIVELMAXIMO){//El usuario ganó el juego
 			set_volume(70,70);
 			play_midi(ganarMusic,1);//Inicia la música de ganador
-			cout<<"Ganador cambia a true"<<endl;
 			ganador=true;//Permitimos la salida de este ciclo
 		}
 		else
@@ -672,9 +665,8 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		vezCargar=0;
 		vez=0;
 		clear(buffer);	
-	} while(perdedor==false && ganador==false);//Ganador se activa cuando se termina el nivel 9
-	
-	if(ganador==true){//El usuario ganó el Juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
+	} while(!perdedor && !ganador);//Ganador se activa cuando se termina el nivel 9
+	if(ganador){//El usuario ganó el Juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
 		this->vectorMotorJuego[0]=load_bitmap("Elementos\\Felicidades.bmp", NULL);
 		l=jugadorActual->getVidas();
 		jugadorActual->setNivel(1);//Le reiniciamos el nivel a 1, para que pueda seguir jugando ahora desde el inicio
@@ -682,18 +674,17 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 		auxiliarArchivo.modificarInformacion(*jugadorActual,0);//Se guarda por última vez la información del usuario	
 		clear_keybuf();//Borramos el buffer de entrada del teclado
 		clear(this->buffer);
+		//Mostramos la pantalla final con las estadísticas finales
 		do{
 			blit(this->vectorMotorJuego[0], this->buffer, 0, 0, 0, 0, 900, 660);
 			textprintf_ex(buffer, font2, 480, 160, makecol(255, 0, 0),-1, "%i",puntosScoreFinal);
 			textprintf_ex(buffer, font2, 570, 235, makecol(255, 0, 0),-1, "%i",l);
-			//textprintf(this->buffer, this->font2, 480, 160, makecol(255, 0, 0), "%i", puntosScoreFinal);
-			//textprintf(this->buffer, this->font2, 570, 235, makecol(255, 0, 0), "%i", l);
 			blit(this->buffer, screen, 0, 0, 0, 0, 960, 660);			
 		}while(!key[KEY_ESC]);
 		blit(this->buffer, screen, 0, 0, 0, 0, 960, 660);	
 		l=0;
 	}
-	else if(perdedor==true){//El usuario perdió el juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
+	else if(perdedor){//El usuario perdió el juego y, por lo tanto, debemos de mostrarle una pantalla que lo indique
 			clear_keybuf();//Borramos el buffer de entrada del teclado
 				clear(buffer);
 				do{
@@ -704,10 +695,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	set_volume(45, 45);//Reducimos el nivel de volumen al original
 	clear_keybuf();//Borramos el buffer*/
 	clear(this->buffer);
-	//}while(true);
 }
-
 void Mapa::reiniciarFantasmas(Clyde &clyde, Pacman &pacman, Blinky &blinky,Pinky &pinky,Inky &inky){
+	//Aquí reiniciamos a todos a susposiciones originales
 	this->matrizJuego[clyde.getI()][clyde.getJ()]=2;
 	clyde.setPos(10,14);
 	this->matrizJuego[10][14]=10;

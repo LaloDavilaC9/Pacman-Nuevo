@@ -2,8 +2,6 @@
 #include <allegro.h>
 #include "Funciones.hpp"
 #include "Mapa.hpp"
-
-
 using namespace std;
 int main(){
 	int Opcion, Salir=4;

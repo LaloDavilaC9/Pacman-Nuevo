@@ -128,7 +128,6 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 			jug->setNombre(auxNomb);
 			textout_ex(screen, font, p, 335, 99,AZUL, 0);
 			memset(p,255,'\0');
-			cout<<"P es en nombre "<<p<<endl;
 		} while(!usuarioLibre);//Sale cuando se le da un enter y el usuario es válido	
 		indice=0;
 		clear_keybuf();
@@ -169,10 +168,10 @@ Jugadores *HistorialJugadores::registroEnArchivo(){
 			memset(p,255,'\0');
 		} 
 		while(salida2==false);
-		
-		if(jug->getNom().size()!=0 && jug->getPass().size()!=0) {
+	
+		if(jug->getNom().size()!=0 && jug->getPass().size()!=0)
 			salida=true;
-		}//Salimos del ciclo que controla la funciï¿½n
+		//Salimos del ciclo que controla la funciï¿½n
 	}
 	archivo.seekp(0, ios::end);
     canReg=archivo.tellg()/sizeof(Jugador);
@@ -241,15 +240,12 @@ Jugadores *HistorialJugadores::iniciarSesion(){
 					//textout(screen, font, "¡Ups! nombre no existente, intente con uno válido", 335, 139, AZUL);
 				else{
 					textprintf_ex(screen, font, 335, 139, AZUL,-1,  "                                                    ");
-					//textout(screen, font, "                                                    ", 335, 139, AZUL);//Borramos la leyenda del "Ups"
 					usuarioLibre=true;
 				}
 			}
 			auxNomb=p;
 			jug->setNombre(auxNomb);
-			//textprintf_ex(screen, font, 335, 99, AZUL,-1, "%s",p);
 			textout_ex(screen, font, p, 335, 99,AZUL, 0);
-			//textout(screen, font, p, 335, 99, AZUL);
 			memset(p,255,'\0');
 		} while(!usuarioLibre);//Sale cuando se le da un enter y el usuario es válido	
 		indice=0;
@@ -265,10 +261,8 @@ Jugadores *HistorialJugadores::iniciarSesion(){
 				 		salida2=true;
 						contrasenaCorrecta=true;
 					}
-					else{
+					else
 						textprintf_ex(screen, font, 335, 245, AZUL,-1, "¡Ups! Clave incorrecta, intente de nuevo");
-						//textout(screen, font, "¡Ups! Clave incorrecta, intente de nuevo", 335, 245, AZUL);
-					}
 
 			 	 }
 				 else{
@@ -295,16 +289,14 @@ Jugadores *HistorialJugadores::iniciarSesion(){
 			}
 			auxPass=p;
 			jug->setPassword(auxPass);
-			//textprintf_ex(screen, font, 335, 210, AZUL,-1, "%s",p);
 			textout_ex(screen, font, p, 335, 210,AZUL, 0);
-			//textout(screen, font, p, 335, 210, AZUL);
 			memset(p,255,'\0');
 		} 
 		while(salida2==false && !contrasenaCorrecta);
 		jug->setPuntos(0);
-		if(jug->getNom().size()!=0 && jug->getPass().size()!=0) {
+		if(jug->getNom().size()!=0 && jug->getPass().size()!=0) 
 			salida=true;
-		}//Salimos del ciclo que controla la funciï¿½n
+		//Salimos del ciclo que controla la funciï¿½n
 	}
     archivo.close();
 	return jug;	
@@ -321,7 +313,7 @@ bool HistorialJugadores::validarContrasena(Jugadores *jug){
         if (strcmp(aux.nombreU,jug->getNom().c_str())==0) {
         	if(strcmp(aux.password,jug->getPass().c_str())==0){
         			jug->setID(aux.id);
-        			jug->setPuntos(aux.puntos);
+        			jug->setPuntos(0);
         			jug->setNivel(aux.nivel);
         			jug->setVidas(aux.vidas);
 					archivo.close();
@@ -403,18 +395,18 @@ void HistorialJugadores::ganadores() {
         	textprintf_ex(buffer, font1, 340, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
 		}
         else if(aux.size()==2){
-          	textprintf_ex(buffer, font1, 405, 350, makecol(253, 214, 94),-1, "%s",aux[0].nombreU);
-        	textprintf_ex(buffer, font1, 405, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
-            textprintf_ex(buffer, font1, 187, 410, makecol(237, 127, 52),-1, "%s",aux[1].nombreU);
-        	textprintf_ex(buffer, font1, 187, 435, makecol(255, 255, 255),-1, "%i",aux[1].puntos);
+          	textprintf_ex(buffer, font1, 340, 350, makecol(253, 214, 94),-1, "%s",aux[0].nombreU);
+        	textprintf_ex(buffer, font1, 340, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
+            textprintf_ex(buffer, font1, 540, 400, makecol(181, 185, 196),-1, "%s",aux[1].nombreU);
+        	textprintf_ex(buffer, font1, 540, 425, makecol(255, 255, 255),-1, "%i",aux[1].puntos);
 		}
 		else if(aux.size()>=3){
             textprintf_ex(buffer, font1, 340, 350, makecol(253, 214, 94),-1, "%s",aux[0].nombreU);
         	textprintf_ex(buffer, font1, 340, 375, makecol(255, 255, 255),-1, "%i",aux[0].puntos);
-            textprintf_ex(buffer, font1, 187, 410, makecol(237, 127, 52),-1, "%s",aux[1].nombreU);
-        	textprintf_ex(buffer, font1, 187, 435, makecol(255, 255, 255),-1, "%i",aux[1].puntos);
-        	textprintf_ex(buffer, font1, 540, 400, makecol(181, 185, 196),-1, "%s",aux[2].nombreU);
-        	textprintf_ex(buffer, font1, 540, 425, makecol(255, 255, 255),-1, "%i",aux[2].puntos);
+            textprintf_ex(buffer, font1, 187, 410, makecol(237, 127, 52),-1, "%s",aux[2].nombreU);
+        	textprintf_ex(buffer, font1, 187, 435, makecol(255, 255, 255),-1, "%i",aux[2].puntos);
+        	textprintf_ex(buffer, font1, 540, 400, makecol(181, 185, 196),-1, "%s",aux[1].nombreU);
+        	textprintf_ex(buffer, font1, 540, 425, makecol(255, 255, 255),-1, "%i",aux[1].puntos);
 		}
     }
     destroy_bitmap(buffer);

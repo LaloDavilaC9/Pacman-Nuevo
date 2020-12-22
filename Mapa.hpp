@@ -1,7 +1,7 @@
 #ifndef MAPA_H_INCLUDED
 	#include "Jugadores.hpp"
 #define MAPA_H_INCLUDED
-#define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
+#define NIVELMAXIMO 2 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
 #define NEGRO makecol(0, 0, 0)//Color predefido
 class Pacman;
@@ -252,7 +252,7 @@ void Mapa::seleccionarMapa(int nivel) {
 void Mapa::dibujarMapa(int nivel,bool poderActivo) {
 	switch(nivel){//Seleccionamos la forma del diseño visual de los mapas
 		case 1:
-			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_s.bmp", NULL);
+			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_1.bmp", NULL);
 			break;
 		case 2:
 			this->vectorPintarMapa[0]=load_bitmap("Elementos\\Bloques_2.bmp", NULL);

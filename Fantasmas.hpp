@@ -4,82 +4,90 @@
 #include <algorithm>
 class Mapa;
 class Fantasmas {
-public:
-    int id, posI, posJ, direccion;
-    bool comibles;
-    SAMPLE *muertePacman,*muerteFantasma;//=load_sample("pacman-dies.wav");
-    Fantasmas(){}
-    Fantasmas(int id,int i, int j) {
-    	this->id=id;
-       	this->posI = i;
-        this->posJ = j;
-        this->direccion = 0;
-        this->comibles = false;
-        this->muertePacman=load_sample("Elementos\\pacman-dies.wav");
-        this->muerteFantasma=load_sample("Elementos\\pacman-eating-ghost");
-    }
-    virtual void movimientoNormal(Mapa &, int,Pacman &) = 0;
-   	bool movimientoValido(Mapa &mapa);
-    void sacarFantasmas(Mapa &);
-    void setPos(int i, int j){
-		this->posI=i;
-		this->posJ=j;
-	}
-	int getI(){return this->posI;}
-	int getJ(){return this->posJ;}
-	int distancia(int iF, int jF, int i, int j) {
-		return (abs(iF-i)+abs(jF-j));
-	}
-	int distanciaMenor(int dis[]) {
-		int menor=dis[0];
-		int indi=1;
-		for(int i=0; i<4; i++) {
-			if(dis[i]<menor) {
-				menor=dis[i];
-				indi=i+1;
-			}		
+	public:
+		int id, posI, posJ, direccion;
+	    bool comibles;
+	    SAMPLE *muertePacman,*muerteFantasma;//=load_sample("pacman-dies.wav");
+	    Fantasmas(){}
+	    
+	    Fantasmas(int id,int i, int j) {
+	    	this->id=id;
+	       	this->posI = i;
+	        this->posJ = j;
+	        this->direccion = 0;
+	        this->comibles = false;
+	        this->muertePacman=load_sample("Elementos\\pacman-dies.wav");
+	        this->muerteFantasma=load_sample("Elementos\\pacman-eating-ghost");
+	    }
+	    //Método virtual y abstracto para cada fantasma
+	    virtual void movimientoNormal(Mapa &, int,Pacman &) = 0;
+	    //Validamos que el fantasma se pueda mover bien
+	   	bool movimientoValido(Mapa &mapa);
+	   	//Sacamos al fantasma de su casa
+	    void sacarFantasmas(Mapa &);
+	    //Setters y getters
+	    void setPos(int i, int j){
+			this->posI=i;
+			this->posJ=j;
 		}
-		return indi;
-	}
-	int distanciaMayor(int dis[]){
-		vector <int> copiaDis;
-		int menor=0;
-		int indi=1;
-		for(int i=0; i<4; i++) {
-			copiaDis.push_back(dis[i]);
+		int getI(){return this->posI;}
+		int getJ(){return this->posJ;}
+		//Calculamos las distancias entre el fantasma y el pacman
+		int distancia(int iF, int jF, int i, int j) {
+			return (abs(iF-i)+abs(jF-j));
 		}
-		sort(copiaDis.begin(),copiaDis.end());
-		for(int i=0;i<4;i++){
-			if(copiaDis[1]==dis[i]){
-				indi=i+1;
-				break;
+		//Calculamos la distancia menor
+		int distanciaMenor(int dis[]) {
+			int menor=dis[0];
+			int indi=1;
+			for(int i=0; i<4; i++) {
+				if(dis[i]<menor) {
+					menor=dis[i];
+					indi=i+1;
+				}		
 			}
-			
+			return indi;
 		}
-		return indi;
-	}
-	
-	void asignarDireccion(Mapa &mapa){
-		int auxDir=this->id-6;
-		switch(this->direccion){
-	    	case 1://Arriba
-	    		mapa.setDirecciones(auxDir,4);//Apunta hacia arriba en el mapa
-				this->posI-=1;
-				break;
-			case 2://Abajo
-				mapa.setDirecciones(auxDir,3);//Apunta hacia arriba en el mapa
-				this->posI+=1;
-				break;
-			case 3://Izquierda
-				mapa.setDirecciones(auxDir,1);//Apunta hacia arriba en el mapa
-				this->posJ-=1;				
-				break;
-			case 4://Derecha
-				mapa.setDirecciones(auxDir,2);//Apunta hacia arriba en el mapa
-				this->posJ+=1;
-				break;
+		//Calculamos la distancia mayor
+		int distanciaMayor(int dis[]){
+			vector <int> copiaDis;
+			int menor=0;
+			int indi=1;
+			for(int i=0; i<4; i++) {
+				copiaDis.push_back(dis[i]);
+			}
+			sort(copiaDis.begin(),copiaDis.end());
+			for(int i=0;i<4;i++){
+				if(copiaDis[1]==dis[i]){
+					indi=i+1;
+					break;
+				}
+				
+			}
+			return indi;
 		}
-	}
+		//Asignamos diirección de movimiento al fantasma
+		void asignarDireccion(Mapa &mapa){
+			int auxDir=this->id-6;
+			switch(this->direccion){
+		    	case 1://Arriba
+		    		mapa.setDirecciones(auxDir,4);//Apunta hacia arriba en el mapa
+					this->posI-=1;
+					break;
+				case 2://Abajo
+					mapa.setDirecciones(auxDir,3);//Apunta hacia arriba en el mapa
+					this->posI+=1;
+					break;
+				case 3://Izquierda
+					mapa.setDirecciones(auxDir,1);//Apunta hacia arriba en el mapa
+					this->posJ-=1;				
+					break;
+				case 4://Derecha
+					mapa.setDirecciones(auxDir,2);//Apunta hacia arriba en el mapa
+					this->posJ+=1;
+					break;
+			}
+		}
 };
 #include "Mapa.hpp"
 void Fantasmas::sacarFantasmas(Mapa &mapa){

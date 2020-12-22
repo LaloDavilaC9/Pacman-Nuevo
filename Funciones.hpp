@@ -9,14 +9,12 @@ struct Guardado{//Esta estructura es la encargada de manejar los puntos, el nive
 	int nivel=1;
 	int vidas=3;
 };
-
 struct Usuario{//Esta estructura se liga con la estructura de Guardado lo que nos permite tener toda la información del usuario en dos estructuras
 	int id;
 	char nombreUsuario[20];
 	char contrasena[25];
 	Guardado info;
 };
-
 void init() {
 	//Configuraciones iniciales de Alegro
 	MIDI *musica1;  
@@ -31,7 +29,7 @@ void init() {
 		allegro_message(allegro_error);
 		exit(-1);
 	}
-	set_window_title("Pac_Man Game");
+	set_window_title("Pac Man Game");
 
 	install_timer();
 	install_keyboard();
@@ -46,40 +44,12 @@ void init() {
 	set_volume(55, 55);
 	//Elección de la canción del menú
 	srand(time(NULL));
-	cancion=rand()%8+1;
-	switch(cancion){
-		case 1:
-			musica1=load_midi("Elementos\\sonora de margarita - que bello.mid");
-			break;
-		case 2:
-			musica1 = load_midi("Elementos\\El_rey_leon_(Hakuna_matata).mid");
-			break;
-		case 3:
-			musica1  = load_midi("Elementos\\Harry_Potter.mid");
-			break;
-		case 4:
-			musica1  = load_midi("Elementos\\angeles_azules_-_amigos_nada_mas.mid");	
-			break;
-		case 5:
-			musica1  = load_midi("Elementos\\Cazafantasmas.mid");	
-			break;
-		case 6:
-			musica1  = load_midi("Elementos\\rata_de_2_patas.mid");
-			break;
-		case 7:
-			musica1  = load_midi("Elementos\\luis miguel - culpable o no.mid");
-			break;
-		case 8:
-			musica1  = load_midi("Elementos\\jefe_de_jefes.mid");
-			break;
-	}
+	musica1  = load_midi("Elementos\\angeles_azules_-_amigos_nada_mas.mid");
 	play_midi(musica1,1);//Reproducción de la canción del menú
 }
-
 void deinit() {
 	clear_keybuf();
 }
-
 int Portada() {
 	int opcion;
 	bool salida=false;
@@ -128,7 +98,6 @@ int Portada() {
 	//Retornamos la opción que eligió el usuario
 	return opcion;
 }
-
 int MiniPortada() {
 	int Opcion1;
 	bool salida=false;
@@ -168,7 +137,6 @@ int MiniPortada() {
 	destroy_bitmap(buffer);
 	return Opcion1;
 }
-
 void menu(int Opcion) {
 	Jugadores *jugador;
 	HistorialJugadores registro;

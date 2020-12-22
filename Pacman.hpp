@@ -1,6 +1,6 @@
 #ifndef PACMAN_H_INCLUDED
 #define PACMAN_H_INCLUDED
-#define PUNTOS 270 //Importante no usar un valor menor a 0 ni mayor a 270
+#define PUNTOS 280 //Importante no usar un valor menor a 0 ni mayor a 270
 
 class Mapa;
 class Pacman {
@@ -51,7 +51,6 @@ class Pacman {
 			}
 		}
 };
-
 Pacman::Pacman(int nivel) {
 	this->posI = 14;
 	this->posJ = 14;
@@ -97,7 +96,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						mapa.setMatrizJuego(this->posI-1,this->posJ,0);//[this->posI-1][this->posJ]=0;//Movemos a Pacman
 						this->mato=buscar-6;
 						this->posI-=1;
-							this->comibles[buscar-7]=false;
+						this->comibles[buscar-7]=false;
 					}
 					else{
 						this->setMuerto(true);
@@ -135,7 +134,7 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 						mapa.setMatrizJuego(this->posI,this->posJ-1,0);//[this->posI][this->posJ-1]=0;//Movemos a Pacman
 						this->posJ-=1;
 						this->mato=buscar-6;
-							this->comibles[buscar-7]=false;
+						this->comibles[buscar-7]=false;
 					}
 					else{
 						this->setMuerto(true);
@@ -223,10 +222,10 @@ void Pacman::movimiento(Mapa &mapa,Jugadores &jugadorActual) {
 bool Pacman::movimientoValido(Mapa &mapa) {
     switch (this->direccion) {
 	    case 1://Arriba
-	        return (mapa.getMatrizJuego(this->posI-1,this->posJ)!=1);   //[posX - 1][posY] != 1 );
+	        return (mapa.getMatrizJuego(this->posI-1,this->posJ)!=1);
 	        break;
 	    case 2://Abajo
-	        return (mapa.getMatrizJuego(this->posI+1,this->posJ)!=1);//(mapa.matrizJuego[posX + 1][posY] != 1 );
+	        return (mapa.getMatrizJuego(this->posI+1,this->posJ)!=1);
 	        break;
 	    case 3://Izquierda, verificación de Teleport de Izquierda a Derecha
 	    	if(this->posI==10 && this->posJ-1==0){
@@ -248,7 +247,7 @@ bool Pacman::movimientoValido(Mapa &mapa) {
 				this->posJ=0;
 				return false;
 			}
-	        return (mapa.getMatrizJuego(this->posI,this->posJ+1)!=1);//(mapa.matrizJuego[posX][posY + 1] != 1 );
+	        return (mapa.getMatrizJuego(this->posI,this->posJ+1)!=1);
 	        break;
 	    default:
 	        return false;

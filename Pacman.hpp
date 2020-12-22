@@ -1,6 +1,6 @@
 #ifndef PACMAN_H_INCLUDED
 #define PACMAN_H_INCLUDED
-#define PUNTOS 280 //Importante no usar un valor menor a 0 ni mayor a 270
+#define PUNTOS 0 //Importante no usar un valor menor a 0 ni mayor a 270
 
 class Mapa;
 class Pacman {

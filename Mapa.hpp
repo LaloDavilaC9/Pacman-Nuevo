@@ -1,7 +1,7 @@
 #ifndef MAPA_H_INCLUDED
 	#include "Jugadores.hpp"
 #define MAPA_H_INCLUDED
-#define NIVELMAXIMO 2 //Importante no usar un valor menor a 2 ni mayor a 10
+#define NIVELMAXIMO 10 //Importante no usar un valor menor a 2 ni mayor a 10
 #define VELOCIDAD 300 //Importante no usar valores negativos
 #define NEGRO makecol(0, 0, 0)//Color predefido
 class Pacman;
@@ -9,7 +9,6 @@ class Clyde;
 class Blinky;
 class Pinky;
 class Inky;
-
 class Mapa {
 	private:
 		int matrizJuego[20][30], dificultad,direccionesVisuales[5],frutas,sonido,puntuacionTotal, pPausaF[4];
@@ -433,8 +432,9 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 	play_midi(NULL,0);//Frenamos la música del inicio
 	SAMPLE *efecto=load_wav("Elementos\\pacman-song.wav");//Tono de inicio de nivel
 	SAMPLE *muertePacman=load_sample("Elementos\\pacman-dies.wav");//Sonido de la muerte del Pacman
-	MIDI *perderMusic =load_midi("Elementos\\Rosas.mid");//Sonido de perdedor
-	MIDI *ganarMusic =load_midi("Elementos\\sam dave - soul man.mid");//Sonido de ganador	
+	MIDI *perderMusic =load_midi("Elementos\\MadWorld.mid");//Sonido de perdedor
+	MIDI *ganarMusic =load_midi("Elementos\\DuckTales.mid");//Sonido de ganador	
+	MIDI *pausa =load_midi("Elementos\\Payaso.mid");//Sonido de ganador	
 	Pacman pacman(jugadorActual->getNivel());//Creamos a Pacman
 	//Creamos a los fantasmas con sus respectivos datos iniciales
 	Clyde clyde(10,10,14);
@@ -515,6 +515,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			}
 			clear(buffer);//Borramos el buffer
 			if(keypressed()){//Detectamos si el usuario apretó la tecla de "escape" para pausar el juego
+				play_midi(pausa,1);//Reproducción de la canción del menú
 				newkey = readkey();
 				ASCII = newkey & 0xff;
 				clear_keybuf();
@@ -546,7 +547,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 					x=false;
 				}	
 			}
-				
+			play_midi(NULL,0);
 			switch(frutas){//Con esto, el programa detecta qué fruta(s) va a mostrar en el Score (es la colección de las frutas).
 				case 0:
 					break;
@@ -612,6 +613,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			vez++;
 			rest(VELOCIDAD);//Maneja la velocidad del juego. Entre más alto el parámetro, más lento el juego
 			if(jugadorActual->getVidas()<=0){//se terminó el juego
+				set_volume(100, 100);
 				play_midi(perderMusic,1);//Se activa la música de derrota
 				perdedor=true;//Permitimos la salida de este ciclo y del siguiente
 			}
@@ -634,7 +636,7 @@ void Mapa::motorJuego(Jugadores *jugadorActual){
 			//auxiliarArchivo.modificarInformacion(*jugadorActual,0);
 		}
 		else if(jugadorActual->getNivel()==NIVELMAXIMO){//El usuario ganó el juego
-			set_volume(70,70);
+			set_volume(100,100);
 			play_midi(ganarMusic,1);//Inicia la música de ganador
 			ganador=true;//Permitimos la salida de este ciclo
 		}

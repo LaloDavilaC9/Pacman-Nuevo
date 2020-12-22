@@ -33,10 +33,16 @@ int main(void) {
     /*Se usan dos vectores auxiliares que serán ordenado (ascendente y descendente) 
     y luego regresará a los valores originales para continuar siendo evaluado en todos los métodos*/
     double t0, t1;
-    int vectorDes_A[15]={1,2,3,6,8,3,8,5,9,12,14,13,17,7,4};
-    int vecDes_D[15]={1,35,2,9,4,2,7,8,3,7,32,64,2,45,7};
-    int vecAuxOrd_A[15], vecAuxOrd_D[15], vecAuxM[15];
-    int tam=15;
+    //int vectorDes_A[15]={1,2,3,6,8,3,8,5,9,12,14,13,17,7,4};
+    //int vecDes_D[15]={1,35,2,9,4,2,7,8,3,7,32,64,2,45,7};
+    int vectorDes_A[10000];
+    int vecDes_D[10000];
+    for(int i=0;i<10000;i++){
+    	vectorDes_A[i]=rand()%20000+1;
+    	vecDes_D[i]=rand()%20000+1;
+	}
+    int vecAuxOrd_A[10000], vecAuxOrd_D[10000], vecAuxM[10000];
+    int tam=10000;
     double mat_De_Tiempos[7][3];
     for(int i=0; i<7; i++) {
         for(int j=0; j<3; j++)
